@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+<script>
+window.onload = function() {
+  // 测试数据
+  const tree = {
+    data: 'A',
+    left: {
+      data: 'B',
+      left: {
+        data: 'D',
+        left: null,
+        right: null,
+      },
+      right: {
+        data: 'F',
+        left: {
+          data: 'E',
+          left: null,
+          right: null,
+        },
+        right: null,
+      },
+    },
+    right: {
+      data: 'C',
+      left: {
+        data: 'G',
+        left: null,
+        right: {
+          data: 'H',
+          left: null,
+          right: null,
+        }
+      },
+      right: {
+        data: 'I',
+        left: null,
+        right: null,
+      },
+    },
+  };
+  const testSearchTree = {
+    data: 18,
+    left: {
+      data: 10,
+      left: {
+        data: 7,
+        left: null,
+        right: {
+          data: 9,
+        },
+      },
+      right: {
+        data: 15,
+        left: null,
+        right: null,
+      },
+    },
+    right: {
+      data: 20,
+      left: null,
+      right: {
+        data: 22,
+        left: null,
+        right: null,
+      },
+    },
+  };
+  // 二分法
+  // p101
+  /* function findNumber(array, targetNumber) {
+    let left = 0;
+    let right = array.length - 1;
+    if (targetNumber === array[0]) {
+      return 0;
+    }
+    if (targetNumber === array[right]) {
+      return right;
+    }
+    let middle = Math.floor((left + right)/2); // lower
+
+    while(left < right) {
+      if (targetNumber < array[middle]) {
+        // left
+        right = middle-1;
+        middle = Math.floor((left + right)/2);
+      } else if (targetNumber > array[middle]) {
+        // right
+        left = middle+1;
+        middle = Math.floor((left + right)/2);
+      } else {
+        // is it!
+        return middle;
+      }
+      // console.log(`${left}:${middle}:${right}`);
+    }
+    return -1;
+  }
+  const position = findNumber([5, 16, 39, 45, 51, 98, 100, 202, 226, 321, 368, 444, 501], 99);
+  console.log(position); */
+
+  // 中序遍历
+  /*
+  // 递归
+  function inorderTraversal(treeNode) {
+    if (treeNode) {
+      inorderTraversal(treeNode.left);
+      console.log(treeNode.data);
+      inorderTraversal(treeNode.right);
+    }
+  }
+  */
+
+  // 非递归
+  /* function inorderTraversal(treeNode) {
+    const stack = [];
+    while(treeNode || stack.length > 0) {
+      while(treeNode) {
+        stack.push(treeNode);
+        treeNode = treeNode.left;
+      }
+      treeNode = stack.pop();
+      console.log(treeNode.data);
+      treeNode = treeNode.right;
+    }
+  }
+  inorderTraversal(tree); */
+
+  // 层序遍历
+  // function leverorderTraversal(treeNode) {
+  //   if (!treeNode) {
+  //     return;
+  //   }
+  //   const stack = [treeNode];
+  //   while(stack.length !== 0) {
+  //     const currentNode = stack.shift();
+  //     console.log(currentNode.data);
+  //     if (currentNode.left) {
+  //       stack.push(currentNode.left);
+  //     }
+  //     if (currentNode.right) {
+  //       stack.push(currentNode.right);
+  //     }
+  //   }
+  // }
+  // leverorderTraversal(tree);
+
+  // 输出全部叶节点
+  // function preorderLeaves(treeNode) {
+  //   const stack = [];
+  //   while(treeNode || stack.length > 0) {
+  //     while(treeNode) {
+  //       stack.push(treeNode);
+  //       treeNode = treeNode.left;
+  //     }
+  //     treeNode = stack.pop();
+  //     if (!treeNode.left && !treeNode.right) {
+  //       console.log(treeNode.data);
+  //     }
+  //     treeNode = treeNode.right;
+  //   }
+  // }
+  // preorderLeaves(tree);
+
+  // 求二叉树高度
+  // function getHeight(treeNode) {
+  //   if (treeNode) {
+  //     const leftHeight = getHeight(treeNode.left);
+  //     const rightHeight = getHeight(treeNode.right);
+  //     const maxHeight = leftHeight > rightHeight ? leftHeight: rightHeight;
+  //     return maxHeight + 1;
+  //   }
+  //   return 0;
+  // }
+  // const res = getHeight(tree);
+  // console.log(res);
+
+  // 生成一颗二叉树
+  // 输入['A', 'B', 'C', 0, 'D',...]， 其中0表示空节点
+  
+  /*
+  function createBinaryTree(array) {
+    // 这段代码也是挫的不行，不过能用
+    let targetNode = null;
+    function preorderTraversal(treeNode, target) {
+      if (treeNode) {
+        if (treeNode.data === target) {
+          targetNode = treeNode;
+        }
+        preorderTraversal(treeNode.left, target);
+        preorderTraversal(treeNode.right, target);
+      }
+    }
+    if (array.length === 0) {
+      return null;
+    }
+    if (!array[0]) {
+      return null;
+    }
+    const stack = [array.shift()];
+    let head = null;
+    let isFirst = true;
+    while(stack.length > 0) {
+      const nodeData = stack.shift();
+      // shift出来的data怎么和已经生成的树的节点相对应？
+      let node = null;
+      if (isFirst) {
+        node = {
+          data: nodeData,
+          left: null,
+          right: null,
+        };
+      } else {
+        preorderTraversal(head, nodeData);
+        node = targetNode;
+      }
+      
+      const leftChildData = array.shift();
+      const rightChildData = array.shift();
+      if (leftChildData === 0) {
+        node.left = null;
+      } else if (leftChildData){
+        const leftChildNode = {
+          data: leftChildData,
+          left: null,
+          right: null,
+        };
+        node.left = leftChildNode;
+        stack.push(leftChildData);
+      }
+      
+      if(rightChildData === 0) {
+        node.right = null;
+      } else if (rightChildData){
+        const rightChildNode = {
+          data: rightChildData,
+          left: null,
+          right: null,
+        };
+        node.right = rightChildNode;
+        stack.push(rightChildData);
+      }
+      if (isFirst) {
+        head = node;
+        isFirst = false;
+      }
+    }
+    return head;
+  }
+  const test = ['A','B','C','D','F','G','I',0,0,'E',0,0,'H',0,0,0,0,0,0];
+  const headOfTree = createBinaryTree(test);
+  console.log(headOfTree);
+  */
+
+  // 表达式树的构造
+  // 后缀表达式，例子 abc*+de*f+g*+
+  /* function isOperator(item) {
+    const operators = ['+', '-', '*', '/'];
+    if (operators.includes(item)) {
+      return true;
+    }
+    return false;
+  }
+  function toBeExpressionTree(array) {
+    if (array.length === 0) {
+      return null;
+    }
+    let index = 0;
+    const stack = [];
+    while(index < array.length) {
+      const arrayItem = array[index];
+      if (!isOperator(arrayItem)) {
+        stack.push({
+          data: arrayItem,
+          left: null,
+          right: null,
+        });
+      } else {
+        const preNumberNode = stack.pop();
+        const postNumberNode = stack.pop();
+        if (!preNumberNode || !postNumberNode) {
+          return null;
+        }
+        const node = {
+          data: arrayItem,
+          left: null,
+          right: null,
+        };
+        node.left = preNumberNode;
+        node.right = postNumberNode;
+        stack.push(node);
+      }
+      index++;
+    }
+    if (stack.length > 1) {
+      return null;
+    }
+    return stack.pop();
+  }
+  const testArr = ['a','b','c','*','+','d','e','*','f','+','g','*','+'];
+  const res = toBeExpressionTree(testArr);
+  console.log(res); */
+
+  // ********二叉搜索树
+  // 查找
+  // 递归
+  /* function find(treeNode, targetNumber) {
+    if (!treeNode) {
+      return false;
+    }
+    if (targetNumber > treeNode.data) {
+      return find(treeNode.right, targetNumber);
+    } else if (targetNumber < treeNode.data) {
+      return find(treeNode.left, targetNumber);
+    } else {
+      return treeNode;
+    }
+  }
+  
+  const res = find(testSearchTree, 7);
+  console.log(res); */
+
+  // 非递归
+  /* function find(treeNode, targetNumber) {
+    while(treeNode) {
+      if (targetNumber < treeNode.data) {
+        treeNode = treeNode.left
+      } else if (targetNumber > treeNode.data) {
+        treeNode = treeNode.right;
+      } else {
+        return treeNode;
+      }
+    }
+    return false;
+  }
+
+  const res = find(testSearchTree, 6);
+  console.log(res); */
+
+  // 查找最小值
+  /* function findMin(treeNode) {
+    while(treeNode.left) {
+      treeNode = treeNode.left;
+    }
+    return treeNode;
+  }
+  const min = findMin(testSearchTree);
+  console.log(min); */
+
+  // 查找最大值
+  /* function findMax(treeNode) {
+    while(treeNode.right) {
+      treeNode = treeNode.right;
+    }
+    return treeNode;
+  }
+  const max = findMax(testSearchTree);
+  console.log(max); */
+
+  /* function insert(treeNode, newData) {
+    if (!treeNode) {
+      const node = {
+        data: newData,
+        left: null,
+        right: null,
+      };
+      return node;
+    }
+    let head = treeNode;
+    let preNode = head;
+    while(treeNode) {
+      if (newData > treeNode.data) {
+        preNode = treeNode;
+        treeNode = treeNode.right;
+      } else if (newData < treeNode.data) {
+        preNode = treeNode;
+        treeNode = treeNode.left;
+      } else {
+        console.log('return');
+        return head;
+      }
+    }
+    const node = {
+      data: newData,
+      left: null,
+      right: null,
+    };
+    console.log(preNode);
+    if (newData > preNode.data) {
+      preNode.right = node;
+    } else if (newData < preNode.data) {
+      preNode.left = node;
+    }
+    return head;
+  }
+  const res = insert(testSearchTree, 21); */
+
+  // 二叉搜索树的删除 （实现是实现了，就是代码写得太挫）
+  // 以下链表查询的方式，如果顺序存储是不是简单点
+  /* function findTargetNodeAndTargetParentNode(treeNode, targetNumber) {
+    let parentNode = null;
+    let _treeNode = treeNode
+    while(_treeNode) {
+      // console.log(_treeNode);
+      if (targetNumber > _treeNode.data) {
+        parentNode = _treeNode;
+        _treeNode = _treeNode.right;
+      } else if (targetNumber < _treeNode.data) {
+        parentNode = _treeNode;
+        _treeNode = _treeNode.left;
+      } else {
+        return {
+          targetParentNode: parentNode,
+          targetNode: _treeNode,
+        };
+      }
+    }
+    return false;
+  }
+
+  function findMax(treeNode) {
+    let _treeNode = treeNode;
+    let parentNode = null;
+    while(_treeNode.right) {
+      parentNode = _treeNode;
+      _treeNode = _treeNode.right;
+    }
+    return {
+      leftChildMax: _treeNode,
+      leftChildMaxParent: parentNode,
+    };
+  }
+
+  function deleteFromBinarySearchTree(treeNode, targetNumber) {
+    let head = treeNode;
+    const {
+      targetParentNode,
+      targetNode,
+    } = findTargetNodeAndTargetParentNode(treeNode, targetNumber);
+    // console.log(targetNode);
+    // console.log(targetParentNode);
+    if (!targetNode.left && !targetNode.right) {
+      // 叶子节点，直接删掉
+      if (targetParentNode) {
+        targetParentNode.left = null;
+        targetParentNode.right = null;
+      } else {
+        head = null
+      }
+    } else if (targetNode.left && targetNode.right) {
+      // 两者都存在
+      // 从左子树里找到最大的，或者从右子树里找到最小的？？
+      const {
+        leftChildMax,
+        leftChildMaxParent,
+      } = findMax(targetNode.left);
+      console.log('有两个孩子存在， targetNode is:', targetNode);
+      console.log('leftChildMax', leftChildMax);
+      
+      if (leftChildMax.left) {
+        leftChildMaxParent.right = leftChildMax.left;
+      } else {
+        leftChildMaxParent.right = null;
+      }
+      console.log('leftChildMaxParent', leftChildMaxParent);
+      if (targetParentNode) {
+        if (leftChildMax.data > targetParentNode.data) {
+          targetParentNode.right.data = leftChildMax.data;
+        } else {
+          targetParentNode.left.data = leftChildMax.data;
+        }
+      } else {
+        head = leftChildMax;
+      }
+    } else {
+      // 只有一个孩子存在
+      console.log('只有一个孩子存在', targetNode);
+      let childNode = null;
+      if (targetNode.left) {
+        childNode = targetNode.left;
+      } else {
+        childNode = targetNode.right;
+      }
+      console.log('childNode is:', childNode);
+      console.log('parentNode is:', targetParentNode);
+      if (targetParentNode) {
+        if (targetNumber > targetParentNode.data) {
+          targetParentNode.right = childNode;
+        } else {
+          targetParentNode.left = childNode;
+        }
+        console.log('then, parentNode is:', targetParentNode);
+      } else {
+        head = childNode;
+      }
+    }
+    return head;
+  }
+
+  const res = deleteFromBinarySearchTree(testSearchTree, 10);
+  console.log(res); */
+
+  // 平衡二叉树
+  // RR
+  // 获得高度
+  /* function getHeight(treeNode) {
+    if (!treeNode) {
+      return 0;
+    }
+    const leftHeight = getHeight(treeNode.left);
+    const rightHeight = getHeight(treeNode.right);
+    const maxHeight = Math.max(leftHeight, rightHeight);
+    return 1+maxHeight;
+  }
+
+  function singleRightRotation(treeNode) {
+    let rightChild = treeNode.right;
+    let rightChildLeftChildTree = rightChild.left;
+    let newHead = {
+      data: rightChild.data,
+      right: rightChild.right,
+      left: treeNode,
+    };
+    newHead.left.right = rightChildLeftChildTree;
+    return newHead;
+  }
+  function singleLeftRotaion(treeNode) {
+    let leftChild = treeNode.left;
+    let leftChildRightChildTree = leftChild.right;
+    let newHead = {
+      data: leftChild.data,
+      left: leftChild.left,
+      right: treeNode,
+    };
+    newHead.right.left = leftChildRightChildTree;
+    return newHead;
+  }
+  function doubleLeftRightRotaion(treeNode) {
+    let leftChild = singleRightRotation(treeNode.left);
+    treeNode.left = leftChild;
+    let head = singleLeftRotaion(treeNode);
+    return head;
+  }
+  function doubleRightLeftRotation(treeNode) {
+    let rightChild = singleLeftRotaion(treeNode.right);
+    treeNode.right = rightChild;
+    let head = singleRightRotation(treeNode);
+    return head;
+  }
+
+  function insert(treeNode, targetNumber) {
+    if (!treeNode) {
+      return {
+        data: targetNumber,
+        left: null,
+        right: null,
+      };
+    }
+    let head = treeNode;
+    let preNode = null;
+    let isFirstChild = true;
+    let isSecondChild = true;
+    let firstDirection = '';
+    let secondDirection = '';
+    while(treeNode) {
+      if (targetNumber > treeNode.data) {
+        if (isFirstChild) {
+          // 对于第一个右子节点
+          firstDirection = 'right';
+        }
+        if (!isFirstChild && isSecondChild) {
+          // 第一个子节点的右子节点
+          secondDirection = 'right';
+        }
+        preNode = treeNode;
+        treeNode = treeNode.right;
+      } else if (targetNumber < treeNode.data) {
+        if (isFirstChild) {
+          // 第一个左子节点
+          firstDirection = 'left';
+        }
+        if (!isFirstChild && isSecondChild) {
+          // 第一个子节点的左子节点
+          secondDirection = 'left';
+        }
+        preNode = treeNode;
+        treeNode = treeNode.left;
+      } else {
+        // 已经存在该数值
+        return false;
+      }
+      if (!isFirstChild) {
+        isSecondChild = false;
+      }
+      isFirstChild = false;
+    }
+    if (targetNumber > preNode.data) {
+      preNode.right = {
+        data: targetNumber,
+        left: null,
+        right: null,
+      };
+    } else if (targetNumber < preNode.data) {
+      preNode.left = {
+        data: targetNumber,
+        left: null,
+        right: null,
+      };
+    }
+    const rightHeight = getHeight(head.right);
+    const leftHeight = getHeight(head.left);
+    if (firstDirection === 'right' && secondDirection === 'right') {
+      if (rightHeight - leftHeight > 1) {
+        head = singleRightRotation(head);
+      }
+    } else if (firstDirection === 'left' && secondDirection === 'left') {
+      if (leftHeight - rightHeight > 1) {
+        head = singleLeftRotaion(head);
+      }
+    } else if (firstDirection === 'right' && secondDirection === 'left') {
+      if (rightHeight - leftHeight > 1) {
+        head = doubleRightLeftRotation(head);
+      }
+    } else if (firstDirection === 'left' && secondDirection === 'right') {
+      if (leftHeight - rightHeight > 1) {
+        head = doubleLeftRightRotaion(head);
+      }
+    }
+    return head;
+  }
+  const testTreeNode = {
+    data: 30,
+    left: {
+      data: 15,
+    },
+    right: {
+      data: 41,
+      left: {
+        data: 33,
+      },
+      right: {
+        data: 50
+      },
+    },
+  };
+  const testNumber = 35;
+  const res = insert(testTreeNode, testNumber);
+  console.log(res); */
+
+  // 最大堆
+  /* 
+    const heap = {
+      data,
+      size, 堆中元素个数
+    }
+    对于JavaScript采用数组模拟
+    ['', 1, 2, 3, 4]
+    数字3 在 index === 3的位置
+    floor(3/2) = 1
+   */
+   // 插入
+   function insertHeap(arr, number) {
+    let numberPosition = arr.length;
+    arr.push(number);
+    while(numberPosition > 0 && arr[numberPosition] !== '') {
+      let parentPosition = Math.floor(numberPosition/2);
+      if (arr[parentPosition] !== '' && arr[parentPosition] < arr[numberPosition]) {
+        let tempNumber = arr[parentPosition];
+        arr[parentPosition] = arr[numberPosition];
+        arr[numberPosition]  = tempNumber;
+        numberPosition = parentPosition;
+      } else {
+        break;
+      }
+    }
+    return arr;
+   }
+   // 删除
+   function deleteHeap(arr) {
+     if (arr.length <= 1) {
+       return;
+     }
+     const deletedNumber = arr[1];
+     const lastNumber = arr.pop();
+     arr[1] = lastNumber;
+     let index = 1;
+     let count = 0;
+     while(index < arr.length) {
+       let leftChildIndex = index*2;
+       let rightChildIndex = index*2 + 1;
+       if (arr[index] > arr[leftChildIndex] && arr[index] > arr[rightChildIndex]) {
+         break;
+       } else if (arr[index] < arr[leftChildIndex]) {
+        console.log('arr[index] < arr[leftChildIndex]')
+         const tempNumber = arr[index];
+         arr[index] = arr[leftChildIndex];
+         arr[leftChildIndex] = tempNumber;
+         index = leftChildIndex;
+       } else if (arr[index] < arr[rightChildIndex]) {
+        console.log('arr[index] < arr[rightChildIndex]')
+         const tempNumber = arr[index];
+         arr[index] = arr[rightChildIndex];
+         arr[rightChildIndex] = tempNumber;
+         index = rightChildIndex;
+       } else {
+        //  leftChildindex 和 rightChildIndex 为 undfined时，执行这里
+        break;
+       }
+     }
+     return arr;
+   }
+  //  const testArr = ['', 44, 25, 31, 18, 10];
+  //  const res = insertHeap(testArr, 58);
+  //  console.log(res);
+  const testArr = ['', 58, 25, 44, 18, 10, 31];
+  const res = deleteHeap(testArr);
+  console.log(res);
+  console.log(testArr);
+}
+</script>
+</body>
+</html>

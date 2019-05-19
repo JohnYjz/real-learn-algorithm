@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+<script>
+window.onload = function() {
+  // 判断是否未二叉搜索树或者镜像二叉搜索树的前序遍历序列
+  function isBinearySearchTree(treeNode) {
+    const leftNode = treeNode.left;
+    const rightNode = treeNode.right;
+    if (!leftNode && !rightNode) {
+      return true;
+    } else if (!leftNode) {
+      if (treeNode.data < rightNode.data) {
+        return true;
+      }
+    } else if (!rightNode){
+      if (treeNode.data > leftNode.data) {
+        return true;
+      }
+    } else {
+      if (treeNode.data < rightNode.data && treeNode.data > leftNode.data) {
+        return true;
+      }
+    }
+    return false;
+  }
+  function isMirroredBinarySearchTree(treeNode) {
+    const leftNode = treeNode.left;
+    const rightNode = treeNode.right;
+    if (!leftNode && !rightNode) {
+      return true;
+    } else if (!leftNode) {
+      if (treeNode.data > rightNode.data) {
+        return true;
+      }
+    } else if (!rightNode){
+      if (treeNode.data < leftNode.data) {
+        return true;
+      }
+    } else {
+      if (treeNode.data > rightNode.data && treeNode.data < leftNode.data) {
+        return true;
+      }
+    }
+    return false;
+  }
+  function getInorderTree(preorderTreeArr, type) {
+    const preorderTree = preorderTreeArr.slice(0);
+    for (let index = 0; index < preorderTree.length; index++) {
+      for (let index2 = index; index2 < preorderTree.length; index2++) {
+        const element2 = preorderTree[index2];
+        if (type === 'ASD') {
+          if (element2 < preorderTree[index]) {
+            const temp = preorderTree[index];
+            preorderTree[index] = preorderTree[index2];
+            preorderTree[index2] = temp;
+          }
+        } else {
+          if (element2 > preorderTree[index]) {
+            const temp = preorderTree[index];
+            preorderTree[index] = preorderTree[index2];
+            preorderTree[index2] = temp;
+          }
+        }
+      }
+    }
+    return preorderTree;
+  }
+  function checkBinaryTree(root, isMirrored) {
+    let isBinaryTree = false;
+    const res = [];
+    function traversalTree1(treeNode) {
+      if (treeNode) {
+        traversalTree1(treeNode.left);
+        isBinaryTree = isBinearySearchTree(treeNode);
+        traversalTree1(treeNode.right);
+      }
+    }
+    function traversalTree2(treeNode) {
+      if (treeNode) {
+        traversalTree2(treeNode.left);
+        isBinaryTree = isMirroredBinarySearchTree(treeNode);
+        traversalTree2(treeNode.right);
+      }
+    }
+    function traversalTree3(treeNode) {
+      if (treeNode) {
+        traversalTree3(treeNode.left);
+        traversalTree3(treeNode.right);
+        res.push(treeNode.data);
+      }
+    }
+    if (isMirrored) {
+      traversalTree2(root);
+    } else {
+      traversalTree1(root);
+    }
+    if (isBinaryTree) {
+      traversalTree3(root);
+      return {
+        isBinaryTree: true,
+        postorder: res,
+      };
+    }
+    return isBinaryTree;
+  }
+  
+  function createBinarySearchTreeFromPreorderTree(preorderArray) {
+    let canCreateTree = true;
+
+    function createNode(preorderArray, inorderArrary) {
+      if (preorderArray.length === 0 || inorderArrary.length === 0) {
+        return;
+      }
+      if (preorderArray.length === 1) {
+        return {
+          data: preorderArray[0],
+          left: null,
+          right: null,
+        }
+      }
+      const root = preorderArray[0];
+
+      const rootPositionInInorderArray = inorderArrary.indexOf(root);
+      const leftChildsInInorderArray = inorderArrary.slice(0, rootPositionInInorderArray);
+      const rightChildsInInorderArray = inorderArrary.slice(rootPositionInInorderArray + 1);
+
+      const len1 = leftChildsInInorderArray.length;
+      const len2 = rightChildsInInorderArray.length;
+
+      const leftChilds = preorderArray.slice(1, 1 + len1);
+      const rightChilds = preorderArray.slice(len1 + 1);
+      
+      if (!checkIsTree(leftChilds, leftChildsInInorderArray) || !checkIsTree(rightChilds, rightChildsInInorderArray)) {
+        canCreateTree = false;
+      }
+
+      return {
+        data: root,
+        left: createNode(leftChilds, leftChildsInInorderArray),
+        right: createNode(rightChilds, rightChildsInInorderArray),
+      };
+    }
+
+    let inorderTreeArrary = getInorderTree(preorderArray, 'ASD');
+    let tree = createNode(preorderArray, inorderTreeArrary);
+    if (!canCreateTree) {
+      canCreateTree = true;
+      inorderTreeArrary = getInorderTree(preorderArray, 'DES');
+      tree = createNode(preorderArray, inorderTreeArrary);
+      console.log(tree)
+      if (!canCreateTree) {
+        return false
+      } else {
+        console.log('镜像')
+        return checkBinaryTree(tree, true);
+      }
+    } else {
+      return checkBinaryTree(tree, false);
+    }
+
+  }
+  
+
+  function checkIsTree(arr1, arr2) {
+    const foundArr = [];
+    arr2.forEach(item2 => {
+      arr1.forEach((item1, index) => {
+        if (item2 === item1 && !foundArr.includes(index)) {
+          foundArr.push(index);
+        }
+      });
+    });
+    if (foundArr.length === arr2.length) {
+      return true;
+    }
+    return false;
+  }
+
+
+  const test1 = [8,6,5,7,10,8,11]
+  const test2 = [8,10,11,8,6,7,5]
+  const test3 = [8,6,8,5,10,9,11]
+  const test4 = [100, 70, 60, 62, 68, 65, 69, 200, 150, 140, 160, 155, 300, 400, 500, 450]
+  const test5 = [85,92,100,120,110,105,88,90,50,20,30,40,35,36,32,28,15]
+  const test6 = [8,6,7,5,10,11,9]
+  const test7 = [-1]
+  const res = createBinarySearchTreeFromPreorderTree(test2);
+  console.log(res);
+}
+</script>
+</body>
+</html>

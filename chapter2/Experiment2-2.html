@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+    window.onload = function () {
+      // 实验2-1 没写对
+      // function calculator(input) {
+      //   if (input.length === 0) {
+      //     return 0;
+      //   }
+      //   let result = 0;
+      //   let tempNumber = '';
+      //   let operator = '';
+      //   let tempOp = '';
+      //   let preNumber = 0;
+      //   let currentNumber = 0;
+      //   const operatorMap = {
+      //     '+': '+',
+      //     '-': '-',
+      //     '*': '*',
+      //     '/': '/',
+      //   };
+      //   len = input.length;
+      //   for (let 3e = 0; index < len; index++) {
+      //     const element = input[index];
+      //     if (operatorMap[element]) {
+      //       if (operator) {
+      //         switch (operator) {
+      //           case '+':
+      //             result = Number(result) + Number(currentNumber);
+      //             break;
+      //           case '-':
+      //             result = Number(result) - Number(currentNumber);
+      //             break;
+      //           case '*':
+      //             result = Number(result) * Number(currentNumber);
+      //             break;
+      //           case '/':
+      //             result = Number(result) / Number(currentNumber);
+      //             break;
+      //         }
+      //         console.log(`${result}=${result}${operator}${currentNumber}`);
+      //         tempOp = operatorMap[element];
+      //         currentNumber = '';
+      //         tempNumber = '';
+      //       } else {
+      //         operator = operatorMap[element];
+      //         currentNumber = tempNumber;
+      //         tempNumber = '';
+      //       }
+      //     } else {
+      //       tempNumber += element;
+      //       console.log('temp', tempNumber);
+      //     }
+      //   }
+      //   return result;
+      // }
+
+      // const res = calculator('1+2*10-10/2');
+      // console.log(res);
+
+      // 2-2
+      // 方法一、最简单的，时间+复杂度为moveNumber*array.length
+      // function rightMove(array, moveNumber) {
+      //   for (let index1 = 0; index1 < moveNumber; index1++) {
+      //     const temp = array[array.length-1];
+      //     for (let index2 = array.length - 1; index2 > 0; index2--) {
+      //       array[index2] = array[index2-1];
+      //     }
+      //     array[0] = temp;
+      //   }
+      //   return array;
+      // }
+      
+      // 方法二、三次倒序
+      // 设数组为testArr，moveNumber为2,
+      // 则 第一次倒序 [6,5,4,3,2,1]
+      // 第二次倒序前两位 [5,6,4,3,2,1]
+      // 第三次倒序后面的几位 [5,6,1,2,3,4]
+      // 凭自己完全想不到。。。
+      // function swap(array, index1, index2) {
+      //   if (index1 === index2) {
+      //     return;
+      //   }
+      //   const temp = array[index1];
+      //   array[index1] = array[index2];
+      //   array[index2] = temp;
+      // }
+      // function myReverse(array, start, end) {
+      //   while(start<end) {
+      //     swap(array, start, end);
+      //     // console.log('after swap', array);
+      //     start++;
+      //     end--;
+      //   }
+      // }
+      // function moveRight2(array, moveNumber) {
+      //   const actualNumber = moveNumber % array.length;
+      //   // console.log(actualNumber);
+      //   myReverse(array, 0, array.length-1);
+      //   // console.log(array);
+      //   myReverse(array, 0, actualNumber - 1);
+      //   // console.log(array);
+      //   myReverse(array, actualNumber, array.length-1);
+      //   // console.log(array);
+      //   return array;
+      // }
+
+      // 实验思考第一题，允许使用moveNumber长度的数组
+      // function moveRight3(array, moveNumber) {
+      //   moveNumber = moveNumber % array.length;
+      //   const temp = [];
+      //   for (let index = array.length - moveNumber; index < array.length; index++) {
+      //     const element = array[index];
+      //     temp.push(element);
+      //   }
+      //   let j = 0;
+      //   for (let index = array.length - moveNumber - 1; index >= 0; index--) {
+      //     array[array.length-1-j] = array[index];
+      //     j++
+      //   }
+      //   for (let index = 0; index < moveNumber; index++) {
+      //     array[index] = temp[index]
+      //   }
+      //   return array;
+      // }
+
+      // 实验思考题第二题，移动次数不能超过2N
+      function moveRight4(array, moveNumber) {
+        let len = array.length;
+        moveNumber = moveNumber%len;
+        let index = 0;
+        let temp1 = array[len-moveNumber];
+        console.log('temp1',temp1);
+        let temp2 = '';
+        let count = 0;
+        while(count < len) {
+          temp2 = array[index];
+          array[index] = temp1;
+          temp1 = temp2;
+          console.log(array);
+          index = (index + moveNumber)%len;
+          count++;
+        }
+        return array;
+      }
+
+      const testArr = [1, 2, 3, 4, 5, 6, 7,8,9];
+      const testArr2 = [11, 22, 56];
+      const testArr3 = [8];
+      const res = moveRight4(testArr, 2);
+      console.log(res);
+    }
+  </script>
+</body>
+</html>

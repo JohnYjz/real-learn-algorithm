@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+<script>
+window.onload = function () {
+  function mergeIntersectedList(list1, list2) {
+    let tempNode = {
+      val: '',
+      next: null,
+    };
+    const head = tempNode;
+    while(list1 && list2) {
+      if (list1.val === list2.val) {
+        console.log('list1===list2',list1.val,list2.val);
+        const node = {
+          val: list1.val,
+          next: null,
+        };
+        tempNode.next = node;
+        tempNode = tempNode.next;
+        list1 = list1.next;
+        list2 = list2.next;
+      } else if (list1.val > list2.val) {
+        console.log('list1>list2',list1.val,list2.val);
+        while(list2 && list1.val > list2.val) {
+          list2 = list2.next;
+        }
+      } else {
+        console.log('list1<list2',list1.val,list2.val);
+        while(list1 && list2.val > list1.val) {
+          list1 = list1.next;
+        }
+      }
+    }
+    return head;
+  }
+
+  function mergeIntersectedListWithoutExtraList(list1, list2) {
+    let preNode1 = {
+      val: '',
+      next: list1,
+    };
+    let preNode2 = {
+      val: '',
+      next: list2,
+    };
+    const head = preNode1;
+    while(list1 && list2) {
+      if (list1.val === list2.val) {
+        // 保留
+        preNode1 = list1;
+        list1 = list1.next;
+      } else if (list1.val > list2.val) {
+        while(list2 && list1.val > list2.val) {
+          
+          // preNode2 = list2;
+          list2 = list2.next;
+          preNode2.next = list2;
+        }
+      } else {
+        while(list1 && list1.val < list2.val) {
+          // preNode1 = list1;
+          list1 = list1.next;
+          preNode1.next = list1;
+        }
+      }
+    }
+    return head;
+  }
+  function createListFromArray(array) {
+    let head = null;
+    let preNode = null;
+    for (let index = 0; index < array.length; index++) {
+      const element = array[index];
+      if (index === 0) {
+        preNode = {
+          val: array[index],
+          next: null,
+        };
+        head = preNode;
+      } else {
+        const node = {
+          val: array[index],
+          next: null,
+        };
+        preNode.next = node;
+        preNode = preNode.next;
+      }
+    }
+    return head;
+  }
+  const arr1 = [3,5,7];
+  const arr2 = [2,3,4,5,6,7,8];
+  const list1 = createListFromArray(arr1);
+  // console.log(list1);
+  const list2 = createListFromArray(arr2);
+  // console.log(list2);
+  // const res = mergeIntersectedList(list1, list2);
+  const res = mergeIntersectedListWithoutExtraList(list1, list2);
+  console.log(res);
+};
+</script>
+</body>
+</html>

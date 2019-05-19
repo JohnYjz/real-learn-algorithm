@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+<script>
+window.onload = function() {
+  function piratesDivideSpoils(diamonds, pirates) {
+    const piratesArray = [];
+    const piratesCount = pirates;
+    console.log(pirates);
+    for (let index = 0; index < piratesCount; index++) {
+      piratesArray.push(-1);
+    }
+    console.log(piratesArray);
+    for (let index = piratesCount - 2; index >= 0; index--) {
+      if (index === piratesCount - 2) {
+        piratesArray[index] = 0;
+        piratesArray[index + 1] = diamonds;
+        console.log('第一轮结果', piratesArray);
+      } else {
+        // 找到右侧除自己外所有海盗数
+        const preTurnPirates = (piratesCount - 1) - index;
+        // 计算要争取的最小海盗数m（上限）
+        const halfPreTurnPirates = Math.ceil(preTurnPirates/2);
+        console.log('需要争取的人数', halfPreTurnPirates);
+        // 从中取得右侧当前值最小的m个位置
+        let count = 0;
+        let sortedArray = [];
+        for (let j = index + 1; j < piratesCount; j++) {
+          const element = piratesArray[j];
+          sortedArray.push(element);
+        }
+        console.log('sortedArray', sortedArray);
+        sortedArray.sort();
+        console.log('sortedArray', sortedArray);
+        let firstPirateDiamondCount = diamonds;
+        const plusPosition = []
+        // 对其全部作+1处理
+        const comparedPosition = [];
+        sortedArray.forEach((item, indexOfSorted) => {
+          if (indexOfSorted < halfPreTurnPirates) {
+            console.log(`${indexOfSorted} < ${halfPreTurnPirates}`);
+            for (let j = index + 1; j < piratesCount; j++) {
+              if (piratesArray[j] === item && !comparedPosition.includes(j)) {
+                plusPosition.push(j);
+                console.log('current plus position', plusPosition);
+                comparedPosition.push(j);
+                break;
+              }
+            }
+          }
+        });
+        console.log('plusPosition', plusPosition);
+        for (let j = index + 1; j < piratesCount; j++) {
+          if (plusPosition.includes(j)) {
+            piratesArray[j] += 1;
+            console.log('修改后', piratesArray);
+            firstPirateDiamondCount -= piratesArray[j];
+          } else {
+            // 不需要争取的位置
+            piratesArray[j] = 0;
+            console.log('置0', piratesArray);
+          }
+        }
+
+        // 剩下的就是自己的钻石数量
+        piratesArray[index] = firstPirateDiamondCount;
+        console.log('第i轮', index);
+        console.log('结果', piratesArray);
+      }
+    }
+    return piratesArray;
+  }
+  const res = piratesDivideSpoils(100, 100);
+  console.log(res);
+}
+</script>
+</body>
+</html>

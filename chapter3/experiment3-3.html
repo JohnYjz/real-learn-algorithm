@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+<script>
+window.onload = function() {
+  function getSequence(array) {
+    const aQueue = [];
+    const bQueue = [];
+    for (let index = 0; index < array.length; index++) {
+      const element = array[index];
+      if ((element)%2 === 0) { // 偶数
+        bQueue.push(element);
+      } else { // 奇数
+        aQueue.push(element);
+      }
+    }
+    console.log('a', aQueue);
+    console.log('b', bQueue);
+    const result = [];
+    while(aQueue.length>0 && bQueue.length>0) {
+      result.push(aQueue.shift());
+      if (aQueue.length === 0) {
+        break;
+      }
+      result.push(aQueue.shift());
+      result.push(bQueue.shift());
+    }
+    
+    while(bQueue.length>0) {
+      result.push(bQueue.shift());
+    }
+    while(aQueue.length>0) {
+      result.push(aQueue.shift());
+    }
+    console.log(result);
+    let returnStr = '';
+    while(result.length > 0) {
+      returnStr += ' ' + result.shift();
+    }
+    return returnStr;
+  }
+  const arr1 = [2,1,3,9,4,1,13,15];
+  const res = getSequence(arr1);
+  console.log(res);
+}
+</script>
+</body>
+</html>

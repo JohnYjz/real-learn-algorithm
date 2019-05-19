@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+<script>
+  /* 
+  node = {
+    coef: 系数,
+    expon: 指数,
+    next: 下一个
+  }
+   */
+window.onload = function() {
+  function createListFromArray(array) {
+    let head = null;
+    for (let index = 0; index < array.length; index++) {
+      const element = array[index];
+      if (index === 0) {
+        head = {
+          coef: element[0],
+          expon: element[1],
+          next: null,
+        };
+        preNode = head;
+      } else {
+        const node = {
+          coef: element[0],
+          expon: element[1],
+          next: null,
+        };
+        preNode.next = node;
+        preNode = preNode.next;
+      }
+    }
+    return head;
+  }
+  function sumPolynomialOfOneIndeterminate(list1, list2) {
+    let head = {
+      coef: '',
+      expon: '',
+      next: null,
+    };
+    let tempNode = head;
+
+    while(list1 && list2) {
+      if (list1.expon > list2.expon) {
+        const node = {
+          coef: list1.coef,
+          expon: list1.expon,
+          next: null,
+        };
+        tempNode.next = node;
+        tempNode = tempNode.next;
+        list1 = list1.next;
+      } else if (list1.expon < list2.expon) {
+        const node = {
+          coef: list2.coef,
+          expon: list2.expon,
+          next: null,
+        };
+        tempNode.next = node;
+        tempNode = tempNode.next;
+        list2 = list2.next;
+      } else { // 两者相等
+        if ((list1.coef + list2.coef) !== 0) {
+          const node = {
+            coef: list1.coef + list2.coef,
+            expon: list1.expon,
+            next: null,
+          };
+          tempNode.next = node;
+          tempNode = tempNode.next;
+        } else if ((list1.coef + list2.coef) === 0 && tempNode.coef === '') {
+          const node = {
+            coef: 0,
+            expon: 0,
+            next: null,
+          };
+          tempNode.next = node;
+          tempNode = tempNode.next;
+        }
+        list1 = list1.next;
+        list2 = list2.next;
+      }
+    }
+    while(list1) {
+      const node = {
+        coef: list1.coef,
+        expon: list1.expon,
+        next: null,
+      };
+      tempNode.next = node;
+      tempNode = tempNode.next;
+      list1 = list1.next;
+    }
+    while(list2) {
+      const node = {
+        coef: list2.coef,
+        expon: list2.expon,
+        next: null,
+      };
+      tempNode.next = node;
+      tempNode = tempNode.next;
+      list2 = list2.next;
+    }
+    head = head.next;
+    return head;
+  }
+
+  function multiplyPolynomialOfOneIndeterminate(list1, list2) {
+    let head2 = list2;
+    let head1 = list1;
+    let result = null;
+    while(list1) {
+      let tempNode = {
+        coef: '',
+        expon: '',
+        next: null,
+      };
+      let tempNodeHead = tempNode;
+      while(list2) {
+        const node = {
+          coef: list1.coef * list2.coef,
+          expon: list1.expon + list2.expon,
+          next: null,
+        };
+        tempNode.next = node;
+        tempNode = tempNode.next;
+        list2 = list2.next;
+      }
+      list2 = head2;
+      tempNodeHead = tempNodeHead.next;
+      console.log('tempNodeHead', tempNodeHead);
+      result = sumPolynomialOfOneIndeterminate(tempNodeHead, result);
+      console.log('result', result)
+      list1 = list1.next;
+    }
+    return result;
+  }
+  // const arr1 = [[3,4], [-5,2], [6,1], [-2,0]];
+  // const arr2 = [[5,20], [-7,4], [3,1]];
+
+  // const arr1 = [[1,2], [1,0]];
+  // const arr2 = [[1,2], [-1,0]];
+
+  const arr1 = [[-1000, 1000], [1000, 0]]
+  const arr2 = [[1000, 1000,], [-1000,0]]
+  const list1 = createListFromArray(arr1);
+  const list2 = createListFromArray(arr2);
+  // const res = sumPolynomialOfOneIndeterminate(list1, list2);
+  const res = multiplyPolynomialOfOneIndeterminate(list1, list2);
+  console.log(res);
+}
+</script>
+</body>
+</html>

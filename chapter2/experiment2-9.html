@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+<script>
+window.onload = function() {
+  function putGoodsIntoBoxes(array) {
+    const boxes = [];
+    const positionOfGoods = [];
+    for (let index = 0; index < array.length; index++) {
+      boxes.push(0);
+      positionOfGoods.push(-1);
+    }
+    const boxesLen = boxes.length;
+    for (let index = 0; index < array.length; index++) {
+      const element = array[index];
+      for (let j = 0; j < boxesLen; j++) {
+        if ((100-boxes[j]) >= element) {
+          positionOfGoods[index] = j+1;
+          boxes[j] = boxes[j] + element;
+          break;
+        }
+      }
+    }
+    let count = -1;
+    for (let index = 0; index < boxes.length; index++) {
+      if (boxes[index] === 0) {
+        count = index;
+        break;
+      }
+    }
+    if (count === -1) {
+      return {
+        count: boxesLen,
+        positionOfGoods,
+      };
+    }
+    return {
+      count,
+      positionOfGoods,
+    };
+  }
+  // const arr1 = [60,70,80,90,30,40,10,20];
+  // const arr2 = [100, 90, 80, 70, 60, 50];
+  const arr3 = [2];
+  const res = putGoodsIntoBoxes(arr3);
+  console.log(res);
+}
+</script>
+</body>
+</html>

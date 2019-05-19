@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+<script>
+window.onload = function() {
+  function HashTable(size) {
+    this.array = [];
+    for (let index = 0; index < size; index++) {
+      this.array[index] = '';
+    }
+    this.size = size;
+  }
+  HashTable.prototype.insertAll = function(array) {
+    for (let index = 0; index < array.length; index++) {
+      const element = array[index];
+      this.insert(element);
+    }
+  }
+  HashTable.prototype.insert = function(number) {
+    const _number = number % this.size;
+    const position = this.findToInsert(_number);
+    this.array[position] = number;
+  }
+  HashTable.prototype.findToInsert = function(_number) {
+    while(typeof this.array[_number] === 'number') {
+      _number++;
+      if (_number === this.size) {
+        _number = 0;
+      }
+    }
+    return _number;
+  }
+  HashTable.prototype.printAll = function(array) {
+    const res = [];
+    for (let index = 0; index < array.length; index++) {
+      const element = array[index];
+      const item = this.print(element);
+      res.push(item);
+    }
+    console.log(res);
+  }
+  HashTable.prototype.print = function(element) {
+    const position = element%this.size;
+    const realPosition = this.findToPrint(position, element);
+    return realPosition;
+  }
+  HashTable.prototype.findToPrint = function(position, element) {
+    while(this.array[position] !== element) {
+      position++;
+      if (position === this.size) {
+        position = 0;
+      }
+    }
+    return position;
+  }
+  const test1 = [24,15,61,88];
+  const standard1 = 5;
+
+  const test2 = [24,39,61,15];
+  const standard2 = 5;
+
+  const test3 = [24,39,61,15,39];
+  const standard3 = 5;
+
+  const myHashTable = new HashTable(standard3);
+  myHashTable.insertAll(test3);
+  myHashTable.printAll(test3);
+  console.log(myHashTable);
+}
+</script>
+</body>
+</html>

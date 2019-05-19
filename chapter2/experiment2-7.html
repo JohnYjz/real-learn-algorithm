@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+<script>
+window.onload = function() {
+  function isPrime(number) {
+    if (number === 1) {
+      return true;
+    }
+    if (number === 2) {
+      return true;
+    }
+    for (let index = 2; index < Math.floor(number/2); index++) {
+      if (number%index === 0) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  function findMinPrime(number) {
+    for (let index = 2; index < Math.floor(number/2); index++) {
+      if (number%index === 0) {
+        return index;
+      }
+    }
+  }
+
+  function primeFactorize1(number) {
+    if (number === 1) {
+      return 1;
+    }
+    if (isPrime(number)) {
+      return number;
+    }
+    const minPrime = findMinPrime(number);
+    console.log('最小素数', minPrime);
+    let power = 1;
+    while(Math.pow(minPrime, power) <= number) {
+      if (number % Math.pow(minPrime, power) === 0) {
+        power ++;
+      } else {
+        break;
+      }
+    }
+    console.log('power is', power);
+    const nextNumber = number/(Math.pow(minPrime, power - 1));
+    return `${minPrime}^${(power - 1)}*${primeFactorize1(nextNumber)}`;
+  }
+
+  function primeFactorize2(number) {
+    if (number === 1) {
+      return 1;
+    }
+    if (isPrime(number)) {
+      return number;
+    }
+    let returnStr = '';
+    while (number >=1) {
+      const minPrime = findMinPrime(number);
+      let power = 1;
+      while(Math.pow(minPrime, power) <= number) {
+        if (number % Math.pow(minPrime, power) === 0) {
+          power ++;
+        } else {
+          break;
+        }
+      }
+      returnStr += minPrime + '^' + (power - 1) + '*';
+      number = number/(Math.pow(minPrime, power - 1));
+      if (number === 1) {
+        break;
+      }
+      if (isPrime(number)) {
+        break;
+      }
+    }
+    return returnStr + number;
+    
+  }
+  const res = primeFactorize2(97532468);
+  console.log(res);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+<script>
+window.onload = function() {
+  /* 
+  node = {
+    coef: 系数,
+    expon: 指数,
+    next: 下一个
+  }
+   */
+  function derivate(node) {
+    const head = node;
+    let preNode = null;
+    while(node) {
+      if (node.expon === 0) {
+        // 如果是常数项，需要删掉该节点
+        if (!preNode) { // 如果是第一项，直接返回0
+          head.coef = 0;
+          head.expon = 0;
+          head.next = null;
+          break;
+        }
+        // 否则让前一个节点去掉
+        preNode.next = null;
+        break;
+      } else {
+        const _coef = node.expon * node.coef;
+        const _expon = node.expon - 1;
+        node.coef = _coef;
+        node.expon = _expon;
+        preNode = node;
+        node = node.next;
+      }
+    }
+    return head;
+  }
+
+  function createListFromArray(array) {
+    let head = null;
+    let preNode = null;
+    for (let index = 0; index < array.length; index++) {
+      const element = array[index];
+      if (index === 0) {
+        head = {
+          coef: array[index][0],
+          expon: array[index][1],
+          next: null,
+        };
+        preNode = head;
+      } else {
+        const node = {
+          coef: array[index][0],
+          expon: array[index][1],
+          next: null,
+        }
+        preNode.next = node;
+        preNode = preNode.next;
+      }
+    }
+    return head;
+  }
+  const arr1 = [[3,4], [-5,2], [6,1], [-2,0]]
+  const arr2 = [[5,20], [-7,4], [3,1]]
+  const arr3 = [[1000, 0]]
+  const arr4 = [[-1000, 1000], [999,0]]
+  const list1 = createListFromArray(arr4);
+  console.log(list1);
+  const result = derivate(list1);
+  console.log(result);
+}
+</script>
+</body>
+</html>

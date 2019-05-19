@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+<script>
+window.onload = function() {
+
+  function MySet() {
+    this.array = [];
+  }
+  MySet.prototype.find = function(item) {
+    const temp = item;
+    while(this.array[temp] > 0) {
+      temp = this.array[temp];
+    }
+    const parent = this.array[temp];
+    while(this.array[item] > 0) {
+      this.array[item] = temp;
+      item = this.array[item];
+    }
+    return this.array[temp];
+  }
+  MySet.prototype.union = function(item1, item2) {
+    const root1 = this.find(item1);
+    const root2 = this.find(item2);
+    if (root1 === root2) {
+      return false;
+    }
+    this.array[root2] = root1;
+  }
+  MySet.prototype.add = function(items) {
+    if (items.length < 1) {
+      return false;
+    }
+    const parent = items[0];
+    const root = this.find(parent);
+    if (typeof root !== 'number') { // 没有根节点的情况下
+      this.array[parent] = -1; // 设置根节点，只有一个根节点
+    }
+    for (let index = 1; index < items.length; index++) {
+      const item = items[index];
+      this.array[item] = parent;
+      this.array[parent]--;
+    }
+  }
+  MySet.prototype.findMax = function() {
+    let max = 0;
+    for (let index = 0; index < this.array.length; index++) {
+      const element = this.array[index];
+      if (element < 0 && element < max) {
+        max = element;
+      }
+    }
+    return -max;
+  }
+  // const arr1 = [1, 2, 3];
+  // const arr2 = [1,4];
+  // const arr3 = [5,6,7];
+  // const arr4 = [6];
+  // const mySet = new MySet();
+  // mySet.add(arr1);
+  // mySet.add(arr2);
+  // mySet.add(arr3);
+  // mySet.add(arr4);
+  // console.log(mySet.findMax());
+  const mySet = new MySet();
+  mySet.add([7]);
+  console.log(mySet.findMax());
+}
+</script>
+</body>
+</html>

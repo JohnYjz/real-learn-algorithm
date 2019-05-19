@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+<script>
+window.onload = function() {
+  /* 
+  4.1
+  (1) right
+  (2) wrong
+  (3) right
+  4.2
+  (1)只有右子树的情况、只有一个节点、只有左子树
+  (2)要么1个，要么没
+  (3)A - DBC, FEG
+     B - D，C    D，C
+     E - F,G     F,G
+             A
+          B      E
+        D   C   F  G
+  (4) ['', 37, 66, 48, 29, 31, 75]
+      ['', 37, 66, 75, 29, 31, 48]
+      ['', 37, 66, 75, 29, 31, 48]
+      ['', 75, 66, 37, 29, 31, 48]
+      ['', 75, 66, 48, 29, 31, 37]
+  (5) maxDu = 3
+      2Du = 1;
+      0Du = 6;
+      假设
+      2Du有3个，每个2Du的节点包含的为两个叶子节点，那么3Du节点为父节点 wrong
+      3Du节点有2个 其子节点为叶子节点，父节点为2Du节点（根节点） 
+   */
+  //  4.3
+  // (3)
+  /* function isSearchBinaryTree(treeNode) {
+    const leftChild = treeNode.left;
+    const rightChild = treeNode.right;
+    if (leftChild && leftChild.data >= treeNode.data) {
+      return false;
+    } else if (rightChild && rightChild.data <= treeNode.data) {
+      return false;
+    } else {
+      return true;
+    }
+    return isSearchBinaryTree(treeNode.left) || isSearchBinaryTree(treeNode.right);
+  }
+  const testTreeNode = {
+    data: 6,
+    left: {
+      data: 3,
+      left: {
+        data:1
+      },
+      right: {
+        data: 4,
+      },
+    },
+    right: {
+      data:5,
+    },
+  };
+  const res = isSearchBinaryTree(testTreeNode);
+  console.log(res); */
+
+  /* 
+  4.4
+
+
+                        +
+                *               *
+        +           E        F     G
+    A      *
+          B  /
+            C D
+  
+   */
+
+   // 4.5
+   /* function findMinDistanceParent(array, target1, target2) {
+    let target1Position = -1;
+    let target2Position = -1;
+    const parents1 = [];
+    const parents2 = [];
+    for (let index = array.length; index > 0; index--) {
+      if (array[index] === target1) {
+        target1Position = index;
+      }
+      if (array[index] === target2) {
+        target2Position = index;
+      }
+      if (target1Position !== -1 && target2Position !== -1) {
+        break;
+      }
+    }
+    console.log(target1Position);
+    console.log(target2Position)
+    
+    while(target1Position > 0) {
+      const parent = Math.floor(target1Position/2);
+      parents1.push(parent);
+      target1Position = parent;
+    }
+    while(target2Position > 0) {
+      const parent = Math.floor(target2Position/2);
+      parents2.push(parent);
+      target2Position = parent;
+    }
+    for (let index = 0; index < parents1.length; index++) {
+      const parent1 = parents1[index];
+      for (let index2 = 0; index2 < parents2.length; index2++) {
+        const parent2 = parents2[index2];
+        if (parent1 === parent2) {
+          return parent1;
+        }
+      }
+    }
+   }
+   const arr = ['', 'a', 'b', 'c', 'd', 'e', 'i', 'j']
+   const res = findMinDistanceParent(arr, 'i', 'j');
+   console.log(res, arr[res]); */
+
+   /* 
+   4.6
+    (1)  
+              root
+      x                 x
+    e    x             b  x
+        g  x             c  d
+          a  f
+
+    (2) [3, 35, 13, 15, 20, 5, 9]
+        [3, 5, 9, 13, 15, 20, 35]
+        [8, 9, 13, 15, 20, 35]     8->3，5
+        [13, 15, 17, 20, 35]     17->(8),9
+        [17, 20, 28, 35]        28->13,15
+        [28, 35, 37]           37->17,20
+        [37, 63]              63->28,35
+        [100]               100->37, 63
+                                100
+                    37                      63
+               17       20(e)           28     35(b)
+            8     9(g)            13(c)  15(d)
+        3(a) 5(f)
+
+    4.7 太简单了略
+    */
+
+  
+}
+</script>
+</body>
+</html>

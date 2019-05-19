@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+<script>
+window.onload = function() {
+  function Minheap() {
+    this.array = [''];
+  }
+  Minheap.prototype.insert = function(data) {
+    this.array.push(data);
+    this.filterToTop(this.array.length - 1);
+  }
+  Minheap.prototype.filterToTop = function(pos) {
+    let index = pos;
+    while(index >= 2) {
+      let = parentPos = Math.floor(index/2);
+      if (this.array[parentPos] > this.array[index]) {
+        this.swap(parentPos, index);
+        index = parentPos;
+      } else {
+        break;
+      }
+    }
+  }
+  Minheap.prototype.swap = function(index1, index2) {
+    const temp = this.array[index1];
+    this.array[index1] = this.array[index2];
+    this.array[index2] = temp;
+  }
+  Minheap.prototype.delete = function() {
+    if (this.array.length === 1) {
+      return;
+    }
+    const res = this.array[1];
+    const lastOne = this.array[this.array.length - 1];
+    this.array[1] = lastOne;
+    this.array.length = this.array.length - 1;
+    // console.log('把最后一个元素放到第一个', this.array);
+    this.filterToBottom();
+    // console.log('filterToBottom', this.array);
+    return res;
+  }
+  Minheap.prototype.filterToBottom = function() {
+    let index = 1
+    while(this.array[index]) {
+      const leftChildPos = index*2;
+      const rightChildPos = index*2 + 1;
+      const leftChild = this.array[leftChildPos];
+      const rightChild = this.array[rightChildPos];
+      // console.log('leftCHild', leftChild);
+      // console.log('rightChild', rightChild);
+      if (leftChild && typeof rightChild !== 'number') {
+        if (this.array[index] > leftChild) {
+          this.swap(index, leftChildPos);
+          index = leftChildPos;
+        } else {
+          break;
+        }
+      } else if (!leftChild && !rightChild) {
+        break;
+      } else if (leftChild && rightChild) {
+        
+        if (this.array[index] < leftChild && this.array[index] < rightChild) {
+          break;
+        } else if (leftChild > rightChild) {
+          // console.log(`leftChild > rightChild, ${leftChild} > ${rightChild}`);
+          if (this.array[index] > rightChild) {
+              this.swap(index, rightChildPos);
+              index = rightChildPos;
+          } else {
+              break;
+          }
+        } else if (rightChild >= leftChild) {
+          // console.log(`rightChild > leftChild, ${rightChild} > ${leftChild}`);
+          if (this.array[index] > leftChild) {
+            this.swap(index, leftChildPos);
+            index = leftChildPos;
+          } else {
+            break;
+          }
+        }
+      }
+    }
+    // console.log(count);
+  }
+  Minheap.prototype.getMinTotal = function() {
+    let totalSum = 0;
+    let count = 0;
+    while(this.array.length > 1) {
+      const item1 = this.delete();
+      let sum = item1;
+      if (this.array.length > 1) {
+        const item2 = this.delete();
+        sum = sum + item2;
+        if (this.array.length > 1) {
+          this.insert(sum);
+        }
+      }
+      totalSum = totalSum + sum;
+      count++;
+    }
+    return totalSum;
+  }
+  function createMinheap(array) {
+    console.log(array);
+    if (array.length === 0) {
+      return null;
+    }
+    if (array.length === 1) {
+      return 0;
+    }
+    const myMinheap = new Minheap();
+    for (let index = 0; index < array.length; index++) {
+      const element = array[index];
+      myMinheap.insert(element);
+    }
+    return myMinheap
+  }
+  const test1 = [4,5,1,2,1,3,1,1];
+  const test2 = [1];
+  function createBigArr() {
+    const arr = [];
+    for (let index = 0; index < 10000; index++) {
+      arr.push(50);
+    }
+    return arr;
+  }
+  const res = createMinheap(createBigArr());
+  console.log(res);
+  if (res) {
+    const realRes = res.getMinTotal();
+    console.log(realRes);
+  }  
+}
+</script>
+</body>
+</html>

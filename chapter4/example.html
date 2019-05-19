@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+<script>
+
+window.onload = function() {
+  // 最大堆
+  // 建立
+  /* function buildHeap(array) {
+    if (array.length <= 1) {
+      return array;
+    }
+    for (let index = array.length - 1; index > 0; index--) {
+      array = percDown(array, index);
+    }
+    return array;
+  }
+  function percDown(array, index) {
+    while(index < array.length) {
+      const leftChildIndex = index*2;
+      const rightChildIndex = index*2+1;
+
+      if (array[leftChildIndex] > array[rightChildIndex]) {
+        if (array[index] < array[leftChildIndex]) {
+          array = swap(array, index, leftChildIndex);
+          index = leftChildIndex;
+        } else {
+          break;
+        }
+      } else {
+        if (array[index] < array[rightChildIndex]) {
+          array = swap(array, index, rightChildIndex);
+          index = rightChildIndex;
+        } else {
+          break;
+        }
+      }
+
+      if (leftChildIndex === undefined || rightChildIndex === undefined) {
+        break;
+      }
+    }
+    return array;
+  }
+
+  function swap(array, index1, index2) {
+    const temp = array[index1];
+    array[index1] = array[index2];
+    array[index2] = temp;
+    return array;
+  }
+
+  const testArray = ['', 79, 66, 43, 83, 30, 87, 38, 55, 91, 72, 49, 9];
+  const res = buildHeap(testArray);
+  console.log(res); */
+
+  // 哈夫曼树
+  // 创建
+  function MinHeap() {
+    this.arr = [''];
+    this.length = this.arr.length;
+  }
+  MinHeap.prototype.delete = function() {
+    if (this.arr.length <= 1) {
+      return;
+    }
+    this.length--;
+    const target = this.arr[1];
+    for (let index = 1; index < this.arr.length - 1; index++) {
+     this.arr[index] = this.arr[index+1]
+    }
+    this.arr.length = this.arr.length - 1;
+    return target;
+  }
+  MinHeap.prototype.add = function(data) {
+    this.arr.push(data);
+    this.length++;
+    let position = this.arr.length - 1;
+    while(position > 1) {
+      const parentPosition = Math.floor(position/2);
+      if (this.arr[parentPosition].data > this.arr[position].data) {
+        const temp = this.arr[parentPosition];
+        this.arr[parentPosition] = this.arr[position];
+        this.arr[position] = temp;
+        position = parentPosition;
+      } else {
+        break;
+      }
+    }
+    return this.arr;
+  }
+  function createHaffManTree(array) {
+    const minHeap = new MinHeap();
+    for (let index = 0; index < array.length; index++) {
+      const element = array[index];
+      minHeap.add({
+        data: element,
+      });
+    }
+    while(minHeap.length > 1) {
+      if (minHeap.length === 2) {
+        return minHeap.delete();
+      }
+      const min1 = minHeap.delete();
+      const min2 = minHeap.delete();
+      const node = {
+        data: min1.data + min2.data,
+        left: min1,
+        right: min2,
+      };
+      minHeap.add(node);
+    }
+    return null;
+  }
+
+  // test
+  const res = createHaffManTree([1,2,3,4,5]);
+  console.log(res);
+}
+</script>
+</body>
+</html>

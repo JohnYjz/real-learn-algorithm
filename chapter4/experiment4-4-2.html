@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+<script>
+window.onload = function() {
+  function MinHeap() {
+    this.array = [''];
+  }
+  MinHeap.prototype.insert = function(item) {
+    this.array.push(item);
+    this.setHeapAfterInsert();
+  }
+  MinHeap.prototype.setHeapAfterInsert = function() {
+    let targetPosition = this.array.length - 1;
+    while(targetPosition > 0) {
+      const parentPosition = Math.floor(targetPosition / 2);
+      if (this.array[targetPosition] > this.array[parentPosition]) {
+        this.swap(targetPosition, parentPosition);
+      } else {
+        break;
+      }
+      targetPosition = parentPosition;
+    }
+  }
+  MinHeap.prototype.swap = function(index1, index2) {
+    const temp = this.array[index2];
+    this.array[index2] = this.array[index1];
+    this.array[index1] = temp;
+  }
+  MinHeap.prototype.delete = function() {
+    if (this.array.length === 1) {
+      return 'EMPTY QUEUE!';
+    }
+    const lastItem = this.array.pop();
+    const firstItem = this.array[1];
+    this.array[1] = lastItem;
+
+    return firstItem;
+  }
+  MinHeap.prototype.setMinheapAfterDelete = function() {
+    let position = 1;
+    while(this.array[position]) {
+      const leftChildPosition = position*2;
+      const rightChildPosition = position*2 + 1;
+      const leftChild = this.array[leftChildPosition];
+      const rightChild = this.array[rightChildPosition];
+      const currentItem = this.array[position];
+      if (leftChild !== undefined && currentItem > leftChild) {
+        this.swap(position, rightChildPosition);
+        position = rightChildPosition;
+      } else if (rightChild !== undefined && currentItem > rightChild) {
+        this.swap(position, leftChildPosition);
+        position = leftChildPosition;
+      } else {
+        break;
+      }
+    }
+  }
+  const myMinHeap = new MinHeap();
+  myMinHeap.insert(5);
+  myMinHeap.insert(4);
+  myMinHeap.insert(3);
+  console.log(myMinHeap);
+  console.log(myMinHeap.delete());
+  console.log(myMinHeap.delete());
+  console.log(myMinHeap.delete());
+  console.log(myMinHeap.delete());
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+<script>
+window.onload = function() {
+  /* 
+  输入先序遍历、中序遍历
+  得到二叉树的高度
+   */
+  function getBinaryTree(prefixArr, infixArr) {
+    if (prefixArr.length === 0) {
+      return null;
+    }
+    const root = prefixArr[0];
+    const {leftInfix, rightInfix} = getLeftInfixAndRightInfixFromInfixArr(infixArr, root);
+    const leftPrefix = getPrefixFromPrefixByInfix(prefixArr,leftInfix);
+    // const rightInfix = getRightInfixFromInfixArr(infixArr, root);
+    const rightPrefix = getPrefixFromPrefixByInfix(prefixArr, rightInfix);
+    if (root === 'G') {
+      console.log(infixArr, root);
+      // console.log(leftInfix, rightInfix);
+      // console.log(leftPrefix);
+      // console.log(rightPrefix);
+    }
+    const node = {
+      data: root,
+      left: getBinaryTree(leftPrefix, leftInfix),
+      right: getBinaryTree(rightPrefix, rightInfix),
+    };
+    return node;
+  }
+  function getLeftInfixAndRightInfixFromInfixArr(infixArr, root) {
+    let isFoundRoot = false;
+    const leftArr = [];
+    const rightArr = [];
+    for (let index = 0; index < infixArr.length; index++) {
+      const element = infixArr[index];
+      if (element !== root && !isFoundRoot) {
+        leftArr.push(element);
+      }
+      if (element === root) {
+        isFoundRoot = true;
+      }
+      if (element !== root && isFoundRoot) {
+        rightArr.push(element);
+      }
+    }
+    return {
+      leftInfix: leftArr,
+      rightInfix: rightArr,
+    };
+  }
+  function getPrefixFromPrefixByInfix(prefixArr, leftInfix) {
+     const prefixResult = [];
+     for (let index = 0; index < prefixArr.length; index++) {
+       const element = prefixArr[index];
+       if (leftInfix.includes(element)) {
+         prefixResult.push(element);
+       }
+     }
+     return prefixResult;
+  }
+
+  function getHeight(treeNode) {
+    if (!treeNode) {
+      return 0;
+    }
+    const leftHeight = getHeight(treeNode.left);
+    const rightHeight = getHeight(treeNode.right);
+    return Math.max(leftHeight, rightHeight) + 1;
+  }
+  // const arr1 = ['A', 'B', 'D', 'F', 'G', 'H', 'I', 'E', 'C'];
+  // const arr2 = ['F', 'D', 'H', 'G', 'I', 'B', 'E', 'A', 'C'];
+  // const tree = getBinaryTree(arr1, arr2);
+  // console.log(tree);
+  // const height = getHeight(tree);
+  // console.log(height);
+
+  // const arr1 = ['c','d','e','f','g','h','i','j','k','l','m','n','x','y','z'];
+  // const arr2 = ['c','d','e','f','g','h','i','j','k','l','m','n','x','y','z'];
+  // const tree = getBinaryTree(arr1, arr2);
+  // console.log(tree);
+  // const height = getHeight(tree);
+  // console.log(height);
+
+  // const arr1 = ['a','b','c','d','e','f','g'];
+  // const arr2 = ['g','f','e','d','c','b','a'];
+  // const tree = getBinaryTree(arr1, arr2);
+  // console.log(tree);
+  // const height = getHeight(tree);
+  // console.log(height);
+
+  const arr1 = ['a'];
+  const arr2 = ['a'];
+  const tree = getBinaryTree(arr1, arr2);
+  console.log(tree);
+  const height = getHeight(tree);
+  console.log(height);
+}
+</script>
+</body>
+</html>

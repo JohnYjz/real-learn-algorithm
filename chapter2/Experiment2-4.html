@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+    function createListFromArray(array) {
+      let head = {};
+      let preNode = {};
+      for (let index = 0; index < array.length; index++) {
+        if (index === 0) {
+          preNode = {
+            value: array[0],
+            next: null,
+          }
+          head = preNode;
+        } else {
+          const node = {
+            value: array[index],
+            next: null,
+          };
+          preNode.next = node;
+          preNode = node;
+        }
+      }
+      return head;
+    }
+    function insertNode(listHead, number) {
+      let preNode = null;
+      let head = listHead;
+      while(listHead) {
+        if (number < listHead.value) {
+          break;
+        }
+        preNode = listHead;
+        listHead = listHead.next;
+      }
+      if (preNode) {
+        const node = {
+          value: number,
+          next: preNode.next,
+        };
+        preNode.next = node;
+      } else { // 如果插入的位置是第一个
+        const node = {
+          value: number,
+          next: head,
+        };
+        head = node;
+      }
+      
+      
+      return head;
+    }
+    const arr1 = [-10, -3, 1, 5, 9, 30];
+    const arr2 = [];
+    const arr3 = [3];
+    const arr4 = [3,4]
+    const res = createListFromArray(arr4);
+    const res2 = insertNode(res, 5);
+    console.log(res2);
+  </script>
+</body>
+</html>

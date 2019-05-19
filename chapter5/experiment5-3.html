@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+<script>
+window.onload = function() {
+  function HashTable(size) {
+    this.array = [];
+    for (let index = 0; index < size; index++) {
+      this.array[index] = undefined;
+    }
+    this.size = size;
+  }
+  HashTable.prototype.insertAll = function(array) {
+    for (let index = 0; index < array.length; index++) {
+      const element = array[index];
+      this.insert(element);
+    }
+  }
+  HashTable.prototype.insert = function(phoneNumber) {
+    const last5Number = phoneNumber.slice(-5);
+    const position = last5Number%this.size;
+    this.insertItem(position, phoneNumber);
+  }
+  HashTable.prototype.insertItem = function(position, phoneNumber) {
+    if (!this.array[position]) {
+      this.array[position] = {
+        value: phoneNumber,
+        count: 1,
+        next: null,
+      };
+      return;
+    }
+    let node = this.array[position];
+    while(node) {
+      if (node.value === phoneNumber) {
+        node.count++;
+        return;
+      }
+      if (node.next) {
+        node = node.next;
+      } else {
+        break;
+      }
+    }
+    node.next = {
+      value: phoneNumber,
+      count: 1,
+      next: null,
+    };
+  }
+  HashTable.prototype.findMax = function() {
+    let max = 0;
+    let result = [];
+    for (let index = 0; index < this.array.length; index++) {
+      const list = this.array[index];
+      const { listMax, phone } = this.getMax(list);
+      if (listMax > max) {
+        console.log(`listMax > max: ${listMax} > ${max}`);
+        max = listMax;
+        result = phone;
+      } else if (listMax === max) {
+        for (let index = 0; index < phone.length; index++) {
+          const phoneItem = phone[index];
+          result.push(phoneItem);
+        }
+      }
+    }
+    if (result.length > 1) {
+      return `${result[0]} ${max} ${result.length}`;
+    }
+    return `${result[0]} ${max}`;
+  }
+  HashTable.prototype.getMax = function(node) {
+    let max = 0;
+    let phoneArr = [];
+    while(node) {
+      if (node.count > max) {
+        max = node.count;
+        phoneArr = [node.value];
+      } else if (node.count === max) {
+        phoneArr.push(node.value)
+      }
+      node = node.next;
+    }
+    const res =  {
+      listMax: max,
+      phone: phoneArr,
+    };
+    // console.log(res);
+    return res;
+  }
+
+  const test1 = [
+    '13005711862',
+    '13505711862',
+    '13588625832',
+    '15005713862',
+    '13588625832',
+    '13088625832',
+    '18087925832',
+    '13588625832',
+  ];
+  const test2 = [
+    '18087925832',
+    '13505711862',
+    '13588625832',
+    '15005713862',
+    '15005713862',
+    '13088625832',
+    '18087925832',
+    '13588625832',
+  ];
+  const myHashTable = new HashTable(23);
+  myHashTable.insertAll(test2);
+  const res = myHashTable.findMax();
+  console.log(res);
+}
+</script>
+</body>
+</html>

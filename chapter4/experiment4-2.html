@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+<script>
+window.onload = function() {
+  // 二叉搜索树
+  function BinaryTree() {
+    this.head = null;
+    this.totalCount = 0;
+  }
+  BinaryTree.prototype.createNode = function (data) {
+    return {
+      data,
+      count: 1,
+      left: null,
+      right: null,
+    };
+  }
+  BinaryTree.prototype.createTreeFromArray = function(array) {
+    for (let index = 0; index < array.length; index++) {
+      const element = array[index];
+      this.insert(element);
+    }
+  }
+  BinaryTree.prototype.insert = function(data) {
+    const newNode = this.createNode(data);
+    if (!this.head) {
+      this.head = newNode;
+    } else {
+      this._insert(this.head, newNode);
+    }
+  }
+  BinaryTree.prototype._insert = function(node, newNode) {
+    if (newNode.data < node.data) {
+      if (node.left === null) {
+        node.left = newNode;
+      } else {
+        this._insert(node.left, newNode);
+      }
+    } else if (newNode.data > node.data) {
+      if (node.right === null) {
+        node.right = newNode;
+      } else {
+        this._insert(node.right, newNode);
+      }
+    } else {
+      node.count++;
+    }
+  }
+  BinaryTree.prototype.setTotalCount = function() {
+    const self = this;
+    this.inorderTraversal(this.head, function(node) {
+      self.totalCount += node.count;
+    });
+  }
+  BinaryTree.prototype.printPercentage = function() {
+    if (this.totalCount === 0) {
+      return null;
+    }
+    const self = this;
+    this.inorderTraversal(this.head, function(node) {
+      const percentage = ((node.count/self.totalCount) * 100).toFixed(2);
+      console.log(`${node.data} --- ${percentage}%`);
+    });
+  }
+  BinaryTree.prototype.inorderTraversal = function(node, cb) {
+    if (node) {
+      this.inorderTraversal(node.left, cb);
+      cb(node);
+      this.inorderTraversal(node.right, cb);
+    } 
+  }
+  
+  const testArr = [
+    'Red Alder',
+    'Ash',
+    'Aspen',
+    'Basswood',
+    'Ash',
+    'Beech',
+    'Yellow Birch',
+    'Ash',
+    'Cherry',
+    'Cottonwood',
+    'Ash',
+    'Cypress',
+    'Red Elm',
+    'Gum',
+    'Hackberry',
+    'White Oak',
+    'Hickory',
+    'Pecan',
+    'Hard Maple',
+    'White Oak',
+    'Soft Maple',
+    'Red Oak',
+    'Red Oak',
+    'White Oak',
+    'Poplan',
+    'Sassafras',
+    'Sycamore',
+    'Black Walnut',
+    'Willow',
+  ];
+  
+  const testArr2 = ['A test for the longest strings'];
+
+  const myBinaryTree = new BinaryTree();
+  myBinaryTree.createTreeFromArray(testArr);
+  myBinaryTree.setTotalCount();
+  myBinaryTree.printPercentage();
+}
+</script>
+</body>
+</html>

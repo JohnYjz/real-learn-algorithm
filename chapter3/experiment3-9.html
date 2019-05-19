@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+<script>
+window.onload = function() {
+  function sortQueue(arr) {
+    const tempArr = [];
+    const resultArr = [];
+    let maxCount = arr.length;
+    let turn = maxCount;
+    let min = '';
+
+    let totalIndex = 0;
+    while (totalIndex < turn) {
+      let index = 0;
+      while(arr.length > 0 && index < maxCount) {
+        const el = arr.shift();
+        index++;
+        if (min === '') {
+          min = el;
+        } else if (min > el) {
+          min = el;
+        }
+        tempArr.push(el);
+      }
+      console.log('arr', arr);
+      console.log('tempArr', tempArr);
+      // 经过上述while，拿到当前轮min
+      while(tempArr.length > 0) {
+        const el = tempArr.shift();
+        if (el !== min) {
+          arr.push(el);
+        }
+      }
+      resultArr.push(min);
+      console.log(`第${totalIndex}轮排序结果：`);
+      console.log(arr);
+      min = '';
+      maxCount --;
+      totalIndex ++;
+    }
+    while(resultArr.length > 0) {
+      arr.push(resultArr.shift());
+    }
+    return arr;
+  }
+
+  // 边界条件太容易错了
+  function sortQueueWithout2ExtraArr(arr) {
+    let resultArr = [];
+    let min = '';
+    let errorIndex = 0;
+    while(arr.length > 0) {
+      let count = arr.length;
+      while(count>0) {
+        const el = arr.shift();
+        // console.log('当前el是', el);
+        if (min === '') {
+          // console.log('第一次赋值Min', min);
+          min = el;
+        } else if(min > el) {
+          // console.log('当前值小于min', el);
+          min = el;
+        }
+        arr.push(el);
+        count --;
+      }
+      console.log(min);
+      count = arr.length;
+      while(count>0) {
+        const el = arr.shift();
+        // console.log('el是', el);
+        // console.log('min是', min);
+        if (el === min) {
+          resultArr.push(el);
+        } else {
+          arr.push(el);
+        }
+        count--;
+      }
+      min = '';
+      console.log('resultArr:',resultArr);
+      errorIndex++
+      if (errorIndex > 100) {
+        break;
+      }
+    }
+    while(resultArr.length > 0) {
+      arr.push(resultArr.shift());
+    }
+    return arr;
+  }
+  const arr1 = [9,4,6,1,8,3,7,0,2,5];
+  const res = sortQueueWithout2ExtraArr(arr1);
+  console.log('last result ', res);
+}
+</script>
+</body>
+</html>

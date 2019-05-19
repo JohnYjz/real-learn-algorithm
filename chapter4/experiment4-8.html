@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+<script>
+window.onload = function() {
+  /* 
+  节点结构
+  const node = {
+    data,
+    type: 0 文件,  1文件夹
+    children: [node], 仅1存在
+  }
+  即最初的节点应该是 [node, node, node]
+   */
+
+  function FileStructure() {
+    this.root = [];
+    this.returnData = [];
+  }
+  FileStructure.prototype.create = function (array) {
+    for (let index = 0; index < array.length; index++) {
+      const element = array[index];
+      const items = element.split('/');
+      let isFile = true;
+      if (element[element.length - 1] === '/') {
+        // 最后一个元素的type 应该是 file,
+        // 否则最后一个元素的type 应该是 dir
+        items.pop();
+        isFile = false;
+      }
+      this.putInRoot(items, isFile);
+    }
+  }
+  FileStructure.prototype.putInRoot = function(files, isFile) {
+    let j = 0;
+    let tempNode = this.root;
+    // 如果找到下一个节点，即给temnode重新赋值过，则为true
+    let next = true;
+    while(tempNode && next) {
+      next = false;
+      for (let index = 0; index < tempNode.length; index++) {
+        const element = tempNode[index];
+        if (files[j] === '') {
+          // console.log('j', j);
+          // console.log('files', files);
+        }
+        // console.log(`${element.data} === ${files[j]}`)
+        if (element.data === files[j]) {
+          // console.log(element.data)
+          // console.log(files[j])
+          if (tempNode[index].children) {
+            next = true;
+            tempNode = tempNode[index].children;
+            j++;
+          } else {
+            // console.log('跳出循环1', tempNode);
+            break;
+          }
+        }
+      }
+    }
+    
+  
+    while(j < files.length) {
+      // console.log(j === files.length - 1)
+      if (j === files.length - 1) {
+        this.insert(tempNode, {
+          data: files[j],
+          type: isFile ? 'file': 'dir',
+          children: isFile ? null : [],
+        })
+      } else {
+        const targetPos = this.insert(tempNode, {
+          data: files[j],
+          type: 'dir',
+          children: [],
+        })
+        // console.log('tempNode', tempNode);
+        tempNode = tempNode[targetPos].children;
+      }
+      j++
+    }
+    
+  }
+  FileStructure.prototype.insert = function(nodes, newNode) {
+    const {data} = newNode;
+    console.log('nodes', nodes, nodes.length);
+    if (nodes.length === 0) {
+      nodes.push(newNode);
+      return;
+    }
+    let targetPos = 0;
+    for (let index = 0; index < nodes.length; index++) {
+      const element = nodes[index];
+      console.log(`new Node:${data} > ${element.data}:${data > element.data} ---- pos:${targetPos}`)
+      if (data > element.data) {
+        
+        // targetPos++;
+        
+        break;
+      } else {
+        targetPos = index;
+      }
+    }
+
+    for (let index = nodes.length - 1; index >= targetPos; index--) {
+      const element = nodes[index];
+      nodes[index+1] = nodes[index];
+    }
+    
+    nodes[targetPos] = newNode;
+    // 这里数组长度未更新！
+    console.log('targetPos', targetPos);
+    console.log('插入后，', nodes, nodes.length);
+    return targetPos;
+  }
+
+  FileStructure.prototype.outputAll = function() {
+    const tempNode = this.root;
+    this.outputRow(tempNode, 0);
+  }
+  FileStructure.prototype.outputRow = function(row, space) {
+    if (row) {
+      for (let index = 0; index < row.length; index++) {
+        const element = row[index];
+        this._output(element, space);
+        this.outputRow(element.children, space+2);
+      }
+    }
+  }
+  FileStructure.prototype._output = function(node, space) {
+    this.returnData.push({
+      data: node.data,
+      space,
+    });
+  }
+  FileStructure.prototype.formatOutput = function() {
+    for (let index = 0; index < this.returnData.length; index++) {
+      const {space, data} = this.returnData[index];
+      let text = '';
+      for (let index = 0; index < space; index++) {
+        text += ' ';
+      }
+      text += data;
+      console.log(text);
+    }
+  }
+
+  const test1 = [
+    'b',
+    'c/',
+    'ab/cd',
+    'a/bc',
+    'ab/d',
+    'a/d/a',
+    'a/d/z/',
+  ]
+  const myFile = new FileStructure();
+  myFile.create(test1);
+  myFile.outputAll();
+  myFile.formatOutput();
+  console.log(myFile.returnData);
+}
+</script>
+</body>
+</html>

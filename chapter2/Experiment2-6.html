@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+<script>
+  // 若数值过大，则无法表示
+// function createSeriesSum(n,m) {
+//   let sum = 0;
+//   for (let index = 0; index < m; index++) {
+//     let item = 0;
+//     for (let j = 0; j <= index; j++) {
+//       item = item + (n * Math.pow(10, j))
+//     }
+//     sum += item;
+//   }
+//   return sum;
+// }
+// const res = createSeriesSum(1,0);
+// console.log(res);
+
+// function sumItems(sumArr, itemArr) {
+//   // console.log(sumArr, itemArr);
+//   let preNum = 0;
+//   for (let index = 0; index < itemArr.length; index++) {
+//     let item = sumArr[index] + itemArr[index] + preNum;
+//     if (item > 9) {
+//       item = item - 10;
+//       preNum = 1;
+//     } else {
+//       preNum = 0;
+//     }
+//     sumArr[index] = item;
+//   }
+// }
+
+// function createSeriesSum1(n, m) {
+//   const sumArr = [];
+//   for (let index = 0; index <= m; index++) {
+//     sumArr.push(0);
+//   }
+//   for (let index = 0; index < m; index++) {
+//     const itemArr = [];
+//     for (let j = 0; j <= index; j++) {
+//       itemArr.push(n);
+//     }
+//     sumItems(sumArr, itemArr);
+//   }
+//   sumArr.reverse();
+//   return sumArr;
+// }
+// const res = createSeriesSum1(1,0);
+// console.log(res);
+
+function createSeriesSum2(n, m) {
+  let preNum = 0;
+  const result = [];
+  for (let index = 0; index <= m; index++) {
+    let item = (m - index)*n + preNum;
+    console.log('item', item);
+    if (item > 9) {
+      preNum = Math.floor(item/10);
+      item = item%10;
+    } else {
+      preNum = 0;
+    }
+    result.push(item);
+  }
+  result.reverse();
+  return result;
+}
+
+const res = createSeriesSum2(6,100);
+console.log(res);
+</script>
+</body>
+</html>

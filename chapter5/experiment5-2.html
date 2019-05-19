@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+<script>
+window.onload = function() {
+  const charMap = {
+    'A': 0,
+    'B': 1,
+    'C': 2,
+    'D': 3,
+    'E': 4,
+    'F': 5,
+    'G': 6,
+    'H': 7,
+    'I': 8,
+    'J': 9,
+    'K': 10,
+    'L': 11,
+    'M': 12,
+    'N': 13,
+    'O': 14,
+    'P': 15,
+    'Q': 16,
+    'R': 17,
+    'S': 18,
+    'T': 19,
+    'U': 20,
+    'V': 21,
+    'W': 22,
+    'X': 23,
+    'Y': 24,
+    'Z': 26,
+  };
+  function HashFn(size) {
+    this.array = [];
+    for (let index = 0; index < size; index++) {
+      this.array[index] = undefined;
+    }
+    this.size = size;
+  }
+  HashFn.prototype.insertAll = function(strs) {
+    for (let index = 0; index < strs.length; index++) {
+      const str = strs[index];
+      if (str === 'NNK') {
+        console.log('NNK___',str);
+      }
+      console.log(str)
+      this.insert(str);
+    }
+  }
+  HashFn.prototype.insert = function(str) {
+    const last3 = str.slice(-3);
+    const numbers = this.getNumberFromStr(last3);
+    const sum = this.getSum(numbers);
+    const position = this.findPosition(sum, str);
+    this.array[position] = str;
+    // console.log(this.array);
+  }
+  HashFn.prototype.getNumberFromStr = function(str) {
+    const res = [];
+    for (let index = 0; index < str.length; index++) {
+      const element = str[index];
+      const number = charMap[element];
+      res.push(number);
+    }
+    return res;
+  }
+  HashFn.prototype.getSum = function(numbers) {
+    let res = 0;
+    for (let index = numbers.length - 1; index >= 0; index--) {
+      const number = numbers[index];
+      res = (res<<5) + number;
+    }
+    return res;
+  }
+  HashFn.prototype.findPosition = function(sum, valueStr) {
+    let position = sum%this.size;
+    let index = 1;
+    let k = index;
+    if (valueStr === 'NNK') {
+        console.log('position', position);
+        console.log('this.array[position]', this.array[position]);
+        console.log('val:', valueStr);
+      }
+    while(this.array[position] !== undefined) {
+      if (valueStr === 'NNK') {
+        console.log('position', position);
+        console.log('this.array[position]', this.array[position]);
+        console.log('val:', valueStr);
+      }
+      
+      if (this.array[position] === valueStr) {
+        console.log('equal')
+        return position;
+      }
+
+      position = position + k;
+      
+      if (position < 0) {
+        position = this.size+position;
+      }
+      if (position >= this.size) {
+        position = position%this.size;
+      }
+      if (k>0) {
+        k = -k;
+      } else {
+        index++;
+        k = index*index;
+      }
+    }
+    return position;
+  }
+  HashFn.prototype.findPositionToOutput = function(sum, val) {
+    let position = sum%this.size;
+    let index = 1;
+    let k = index;
+    while(this.array[position] !== val) {
+      position = position + k;
+      
+      if (position < 0) {
+        position = this.size+position;
+      }
+      if (position >= this.size) {
+        position = position%this.size;
+      }
+      if (k>0) {
+        k = -k;
+      } else {
+        index++;
+        k = index*index;
+      }
+      // if (this.array[position] === undefined){
+      //   return -1;
+      // }
+    }
+    return position;
+  }
+  HashFn.prototype.outPutAll = function(array) {
+    const res = [];
+    for (let index = 0; index < array.length; index++) {
+      const element = array[index];
+      res.push(this.find(element));
+    }
+    console.log(res);
+  }
+  HashFn.prototype.find = function(str) {
+    const last3 = str.slice(-3);
+    const numbers = this.getNumberFromStr(last3);
+    const sum = this.getSum(numbers);
+    const position = this.findPositionToOutput(sum, str);
+    return position;
+  }
+  const test1 = ['HELLO', 'ANNAK', 'ZOE', 'LOLI'];
+  const test2 = ['LLO', 'ANNA', 'NNK', 'ZOJ', 'INNK', 'AAA'];
+  const test3 = ['HELLO','ANNA','NNK', 'ZOJ','NNK'];
+  const test4 = ['A', 'ZZZZZZZZ', 'AA', 'ZZ']
+  const size1 = 11;
+  const myHashTable = new HashFn(size1);
+  myHashTable.insertAll(test4);
+  console.log(myHashTable);
+  myHashTable.outPutAll(test4);
+}
+</script>
+</body>
+</html>

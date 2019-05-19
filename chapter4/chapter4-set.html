@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+<script>
+window.onload = function () {
+  function MySet(arr) {
+    this.array = arr;
+  }
+  // 查找所在集合
+  MySet.prototype.find = function(target) {
+    while(this.array[target] >= 0) {
+      const parent = this.array[target];
+      target = parent;
+    }
+    return target;
+  }
+  MySet.prototype.find2 = function(target) {
+    const tempArr = [];
+    while(this.array[target] >= 0) {
+      tempArr.push(target);
+      const parent = this.array[target];
+      target = parent;
+    }
+    tempArr.forEach(item => {
+      this.array[item] = target;
+    });
+    return target;
+  }
+  // 并运算
+  MySet.prototype.union1 = function(target1, target2) {
+    const root1 = this.find(target1);
+    const root2 = this.find(target2);
+    this.array[root2] = root1;
+  }
+
+  MySet.prototype.union2 = function(target1, target2) {
+    const root1 = this.find2(target1);
+    const root2 = this.find2(target2);
+    console.log(root1, root2);
+    if (root1 === root2) {
+      return;
+    }
+    if (this.array[root1] < this.array[root2]) { // abs(root1) > abs(root2)
+      this.array[root2] = root1
+    } else {
+      this.array[root1] = root2;
+    }
+  }
+
+  // const testSet1 = new MySet([6, -1, 1, -1, 1, 3, -1, 1, 3, 6]);
+  // const res = testSet1.find(8)
+  // console.log(testSet1.array);
+  // testSet1.union1(4, 5);
+  // console.log(testSet1);
+
+  const testSet2 = new MySet([6, -7, 1, 1, 1, 3, -3, 1, 3, 6]);
+  testSet2.union2(9, 2);
+  console.log(testSet2);
+}
+</script>
+</body>
+</html>

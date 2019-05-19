@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+<script>
+window.onload = function() {
+  // 中缀转后缀
+  /* 
+    中缀表达式
+      1 / 2 * (3 + 4) - 2
+    后缀表达式
+      1 2 / 3 4 + * 2 -
+
+    符号先入栈，如果后面入栈的符号和前面的优先级一致或低于，则前面的符号输出，后者入栈和更后面的比
+  */
+
+  function isOperator(item) {
+    const operators = ['+', '-', '*', '/', '(', ')'];
+    if (operators.includes(item)) {
+      return true;
+    }
+    return false;
+  }
+  function isAdvanced(op1, op2) {
+    const lowerOperators = ['+', '-'];
+    const middleOperators = ['*', '/'];
+    const brackets = ['(', ')'];
+    const LEVEL_1 = 1;
+    const LEVEL_2 = 2;
+    const LEVEL_3 = 3;
+    let levelOfOp1 = -1;
+    let levelOfOp2 = -1;
+    if (lowerOperators.includes(op1)) {
+      levelOfOp1 = LEVEL_1;
+    } else if (middleOperators.includes(op1)) {
+      levelOfOp1 = LEVEL_2;
+    }
+
+    if (lowerOperators.includes(op2)) {
+      levelOfOp2 = LEVEL_1;
+    } else if (middleOperators.includes(op2)) {
+      levelOfOp2 = LEVEL_2;
+    }
+
+    const res = levelOfOp1 - levelOfOp2;
+    if (res > 0) {
+      return true;
+    } else {
+      return false;
+    }
+
+  }
+
+  function getItem(str) {
+    // +or- number . number   是一个数字
+    // 用正则做，以后专门针对正则做训练
+  }
+
+  function getEquationArrayFromString(str) {
+    const res = [];
+    while(str.length>0) {
+      const {item, strAfter} = getItem(str);
+      res.push(item);
+      str = strAfter
+    }
+    return res;
+  }
+
+  function infixToPostfix(array) {
+    const resultArr = [];
+    const operatorArr = [];
+    while(array.length > 0) {
+      const item = array.shift();
+      if (!isOperator(item)) {
+        resultArr.push(item);
+      } else {
+        // 判断里面是否有括号
+        if (item === '(') {
+          operatorArr.push(item);
+        } else if (item === ')') {
+          while(operatorArr.length > 0) {
+            const temOp = operatorArr.pop();
+            if (temOp === '(') {
+              break;
+            } else {
+              console.log('入栈', temOp);
+              resultArr.push(temOp);
+            }
+          }
+          console.log('遇到了一个)', resultArr);
+        } else {
+          if (operatorArr.length > 0) {
+            const preOperator = operatorArr.pop();
+            if (preOperator === '(') { // 如果只有一个元素
+              operatorArr.push(preOperator);
+              operatorArr.push(item);
+            } else if (isAdvanced(item, preOperator)) { // 如果item > preOperator
+              operatorArr.push(preOperator);
+              operatorArr.push(item);
+            } else {
+              resultArr.push(preOperator);
+              console.log('新输入的item优先级低于前面的', item, preOperator);
+              while(operatorArr.length > 0) {
+                const temOp = operatorArr.pop();
+                if (temOp === '(') {
+                  operatorArr.push(temOp);
+                  break;
+                }
+                resultArr.push(temOp);
+              }
+              operatorArr.push(item);
+            }
+          } else {
+            operatorArr.push(item);
+          }
+          console.log('operator', operatorArr);
+        }
+      }
+    }
+    while(operatorArr.length > 0) {
+      resultArr.push(operatorArr.pop());
+    }
+    return resultArr;
+  }
+  const arr1 = [2, '+', 3, '*', '(', 7, '-', 4, ')', '+', 8, '/', 4];
+  const arr2 = ['(', '(', 2, '+', 3, ')', '*', 4, '-', '(', 8,'+', 2, ')', ')', '/', 5];
+  const arr3 = [1314, '+', 25.5, '*', 12];
+  const arr4 = [-2, '*', '(', +3, ')'];
+  const res = infixToPostfix(arr4);
+  console.log(res);
+}
+</script>
+</body>
+</html>

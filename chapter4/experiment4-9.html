@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+<script>
+window.onload = function() {
+  function createTree(array) {
+    const res = [];
+    const leafPosition = [];
+    array.forEach((item, index) => {
+      leafPosition.push(index);
+    });
+
+    array.forEach((node, index) => {
+      const [k1, k2, leftChildPositin, rightChildPosition] = node;
+      if (leftChildPositin !== -1) {
+        if (leafPosition.includes(leftChildPositin)) {
+          const position = leafPosition.indexOf(leftChildPositin);
+          leafPosition[position] = -1;
+        }
+      }
+      if (rightChildPosition !== -1) {
+        if (leafPosition.includes(rightChildPosition)) {
+          const position = leafPosition.indexOf(rightChildPosition);
+          leafPosition[position] = -1;
+        }
+      }
+      const newNode = {
+        k1,
+        k2,
+        leftChildPositin,
+        rightChildPosition,
+      }
+      res.push(newNode);
+    });
+
+    let rootPosition = -1;
+    leafPosition.forEach(item => {
+      if (item !== -1) {
+        rootPosition = item;
+      }
+    });
+    
+    const rootNode = res[rootPosition];
+
+    const stack = [rootNode];
+
+    while(stack.length !== 0) {
+      const node = stack.pop();
+      const leftChildPositin = node.leftChildPositin;
+      const rightChildPosition = node.rightChildPosition;
+      const leftNode = res[leftChildPositin];
+      const rightNode = res[rightChildPosition];
+      if (leftNode) {
+        stack.push(leftNode);
+        node.left = leftNode;
+      }
+      if (rightNode) {
+        stack.push(rightNode);
+        node.right = rightNode;
+      }
+    }
+    console.log(rootNode);
+    return rootNode;
+  }
+
+  function validateTree(root) {
+    isRight = true;
+    const inorderArr = [];
+    function traversal(node) {
+      if (node) {
+        if (node.left && node.right) {
+          if (node.left.k1 > node.k1 || node.right.k1 < node.k1) {
+            isRight = false;
+          }
+          if (node.left.k2 < node.k2 || node.right.k2 < node.k2) {
+            isRight = false;
+          }
+        } else if (!node.left && node.right) {
+          if (node.right.k1 < node.k1) {
+            isRight = false;
+          }
+          if (node.right.k2 < node.k2) {
+            isRight = false;
+          }
+        } else if (!node.right && node.left) {
+          if (node.left.k1 > node.k1) {
+            isRight = false;
+          }
+          if (node.left.k2 < node.k2) {
+            isRight = false;
+          }
+        }
+
+        traversal(node.left);
+        inorderArr.push(node.k1);
+        traversal(node.right);
+      }
+    }
+    traversal(root);
+    console.log(inorderArr);
+    for (let index = 0; index < inorderArr.length - 1; index++) {
+      const element = inorderArr[index];
+      const nextElement = inorderArr[index + 1];
+      if (element > nextElement) {
+        isRight = false;
+      }
+    }
+    return isRight;
+  }
+
+  const test1 = [
+    [8,27,5,1],
+    [9,40,-1,-1],
+    [10,20,0,3],
+    [12,21,-1,4],
+    [15,22,-1,-1],
+    [5,35,-1,-1],
+  ];
+  const test2 = [
+    [8,27,5,1],
+    [9,40,-1,-1],
+    [10,20,0,3],
+    [12,11,-1,4],
+    [15,22,-1,-1],
+    [50,35,-1,-1],
+  ]
+  const test3 = [
+    [8,27,5,1],
+    [9,40,-1,-1],
+    [10,20,0,3],
+    [12,22,-1,4],
+    [15,21,6,-1],
+    [5,35,-1,-1],
+    [13,23,-1,-1],
+  ]
+  const test4 = [
+    [8,27,5,1],
+    [9,40,-1,-1],
+    [10,20,0,3],
+    [12,21,-1,4],
+    [11,22,-1,-1],
+    [5,35,-1,-1],
+  ]
+  const test5 = [
+    [11,5,3,-1],
+    [15,3,4,7],
+    [5,2,6,0],
+    [6,8,-1,-1],
+    [9,6,-1,8],
+    [10,1,2,1],
+    [2,4,-1,-1],
+    [20,7,-1,-1],
+    [12,9,-1,-1],
+  ]
+  const test6 = [
+    [1,1,-1,-1]
+  ]
+  const treenode = createTree(test6);
+  const res = validateTree(treenode);
+  console.log(res);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+<script>
+window.onload = function() {
+  function createListFromArray(array) {
+    let head = null;
+    for (let index = 0; index < array.length; index++) {
+      const element = array[index];
+      if (index === 0) {
+        head = {
+          val: element,
+          next: null,
+        };
+        preNode = head;
+      } else {
+        const node = {
+          val: element,
+          next: null,
+        };
+        preNode.next = node;
+        preNode = preNode.next;
+      }
+    }
+    return head;
+  }
+  function getKBackwards(k, list) {
+    let head = list;
+    let count = 0;
+    while(list) {
+      count++;
+      list = list.next;
+    }
+    console.log(count-4);
+    if ((count - k) < 0) {
+      console.log('return null', count-k)
+      return 'NULL';
+    }
+    list = head;
+    let index = 0;
+    let target = null;
+    while(list) {
+      if ((count - k) === index) {
+        target = list.val;
+        break;
+      }
+      index++;
+      list = list.next;
+    }
+    return target;
+  }
+
+  function getKBackwards2(k, list) {
+    let head = list;
+    let count = 0;
+    while(list) {
+      count++;
+      if (!list.next) {
+        break;
+      }
+      if (count >= k) {
+        head = head.next;
+      }
+      list = list.next;
+    }
+    if (count < k) {
+      return 'NULL';
+    }
+    return head.val;
+  }
+
+  const arr1 = [1,2,3,4,5,6,7,8,9,0];
+  const position = 4;
+
+  // const arr1 = [3,6,7,8,2];
+  // const position = 6;
+
+  const list1 = createListFromArray(arr1);
+  const res = getKBackwards2(position, list1);
+  console.log(res);
+}
+</script>
+</body>
+</html>

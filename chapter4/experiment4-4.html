@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+<script>
+window.onload = function() {
+  function MinHeap() {
+    this.array = [''];
+  }
+  MinHeap.prototype.insert = function({msg, priority}) {
+    this.array.push({
+      msg,
+      priority,
+    });
+    this.filterToTop(this.array.length - 1);
+  }
+  MinHeap.prototype.filterToTop = function(position) {
+    while(position > 1) {
+      let parentPosition = Math.floor(position/2);
+      // console.log(`position:${position}, parentPosition:${parentPosition}`);
+      if (this.array[position].priority < this.array[parentPosition].priority) {
+        this.swap(position, parentPosition);
+        position = parentPosition;
+      } else {
+        break;
+      }
+    }
+  }
+  MinHeap.prototype.swap = function(pos1, pos2) {
+    // console.log(`${this.array[pos1].priority}--${this.array[pos2].priority}`);
+    const temp = this.array[pos1];
+    this.array[pos1] = this.array[pos2];
+    this.array[pos2] = temp;
+  }
+  MinHeap.prototype.deleteQueue = function() {
+    if (this.array.length === 1) {
+      return 'EMPTY QUEUE!';
+    }
+    const res = this.array[1];
+    const lastOne = this.array.pop();
+    if (this.array.length !== 1) {
+      this.array[1] = lastOne;
+      this.filterToBottom();
+    }
+    return res;
+  }
+  MinHeap.prototype.filterToBottom = function() {
+    let pos = 1;
+    let count = 0;
+    while(this.array[pos] && count<20) {
+      console.log('filterToBottom');
+      console.log(pos, this.array[pos]);
+      const leftChildPos = pos*2;
+      const rightChildPos = pos*2 + 1;
+      const leftChild = this.array[leftChildPos];
+      const rightChild = this.array[rightChildPos];
+      if (!leftChild && !rightChild) {
+        break;
+      }else if (!rightChild || leftChild.priority < rightChild.priority) {
+        // console.log('ledftChild', leftChild);
+        if (this.array[pos].priority > leftChild.priority) {
+          this.swap(pos, leftChildPos);
+          pos = rightChildPos;
+        } else {
+          break;
+        }
+      } else {
+        // console.log('leftChild bigger than rightChild')
+        if (this.array[pos].priority > rightChild.priority) {
+          this.swap(pos, rightChildPos);
+          pos = leftChildPos;
+        } else {
+          break;
+        }
+      }
+      count ++;
+    }
+  }
+
+  MinHeap.prototype.parseCommand = function([command, msg, priority]) {
+    if (command === 'PUT') {
+      this.insert({
+        msg,
+        priority,
+      });
+    } else if (command === 'GET') {
+      const res = this.deleteQueue();
+      console.log('deleteQ', res);
+    } else {
+      new Error('错误指令!');
+    }
+  }
+
+  MinHeap.prototype.patchCommands = function(commands) {
+    commands.forEach(command => {
+      this.parseCommand(command);
+    });
+  }
+
+  const test = [
+    ['PUT', 'msg1', 5],
+    ['PUT', 'msg2', 4],
+    ['GET'],
+    ['PUT', 'msg3', 2],
+    ['PUT', 'msg4', 4],
+    ['GET'],
+    ['GET'],
+    ['GET'],
+    ['GET'],
+  ];
+
+  const myMinHeap = new MinHeap();
+  myMinHeap.patchCommands(test);
+  console.log(myMinHeap)
+}
+</script>
+</body>
+</html>

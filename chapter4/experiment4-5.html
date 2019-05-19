@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+<script>
+window.onload = function() {
+  function Tree() {
+    this.root = null;
+  }
+  Tree.prototype.createNode = function({space, data}) {
+    return {
+      data,
+      space,
+      left: null,
+      right: null,
+    };
+  }
+  Tree.prototype.preorderTraversal = function(node, data) {
+    const stack = [];
+    while(node || stack.length !== 0) {
+      while(node) {
+        stack.push(node)
+        node = node.left;
+      }
+      node = stack.pop();
+      if (node && node.data === data) {
+        return node;
+      }
+      node = node.right;
+    }
+    return null;
+  }
+  Tree.prototype.insert = function({space, data}, parentName) {
+    const newNode = this.createNode({space, data});
+    // console.log(newNode)
+    if (parentName) {
+      // 直接后续遍历找到的父节点可能是错的
+      const parentNode = this.preorderTraversal(this.root, parentName);
+      console.log('parentNode', parentNode);
+      if (parentNode) {
+        newNode.parentName = parentNode.data;
+        if (!parentNode.left) {
+          parentNode.left = newNode;
+        } else {
+          parentNode.right = newNode;
+        }
+      }
+    } else {
+      this.root = newNode;
+    }
+  }
+  Tree.prototype.readInput = function(array) {
+    const spaceMap = {}
+    for (let index = 0; index < array.length; index++) {
+      const [space, data] = array[index];
+      if (!spaceMap[space]) {
+        spaceMap[space] = [data];
+      } else {
+        spaceMap[space].push(data);
+      }
+      if (space > 0) {
+        const tempArr = spaceMap[space-2];
+        const lastOne = tempArr[tempArr.length-1];
+        this.insert({space, data}, lastOne);
+      } else {
+        this.insert({space, data});
+      }
+    }
+  }
+  Tree.prototype.readJudgement = function(array) {
+    for (let index = 0; index < array.length; index++) {
+      const [name1, relation, name2] = array[index];
+      if (relation === 'child') {
+        const node = this.preorderTraversal(this.root, name1);
+        if (node.parentName === name2) {
+          console.log(true)
+        } else {
+          console.log(false)
+        }
+      } else if (relation === 'ancestor') {
+        const node1 = this.preorderTraversal(this.root, name1);
+        const node2 = this.preorderTraversal(this.root, name2);
+        if (node1.space < node2.space) {
+          console.log(true)
+        } else {
+          console.log(false)
+        }
+      } else if (relation === 'sibling') {
+        const node1 = this.preorderTraversal(this.root, name1);
+        const node2 = this.preorderTraversal(this.root, name2);
+        if (node1.space === node2.space) {
+          console.log(true)
+        } else {
+          console.log(false)
+        }
+      } else if (relation === 'parent') {
+        const node = this.preorderTraversal(this.root, name2);
+        if (node.parentName === name1) {
+          console.log(true)
+        } else {
+          console.log(false)
+        }
+      } else if (relation === 'descendant') {
+        const node1 = this.preorderTraversal(this.root, name2);
+        const node2 = this.preorderTraversal(this.root, name1);
+        if (node1.space < node2.space) {
+          console.log(true)
+        } else {
+          console.log(false)
+        }
+      }
+    }
+  }
+  const test = [
+    [0, 'John'],
+    [2, 'Robert'],
+    [4, 'Frank'],
+    [4, 'Andrew'],
+    [2, 'Nancy'],
+    [4, 'David'],
+  ];
+  const judgement = [
+    ['Robert', 'child', 'John'],
+    ['Robert', 'ancestor', 'Andrew'],
+    ['Robert', 'sibling', 'Nancy'],
+    ['Nancy', 'parent', 'Frank'],
+    ['John', 'descendant', 'Andrew'],
+  ];
+  const myTree = new Tree();
+  myTree.readInput(test);
+  myTree.readJudgement(judgement);
+}
+</script>
+</body>
+</html>

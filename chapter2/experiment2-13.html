@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+<script>
+window.onload = function() {
+  function mergeList(list1, list2) {
+    let tempList = {
+      val: '',
+      next: null,
+    };
+    const head = tempList;
+    let len1 = 1;
+    let len2 = 1;
+    while(list1 && list2) {
+      if (list1.val <= list2.val) {
+        const node = {
+          val: list1.val,
+          next: null,
+        };
+        tempList.next = node;
+        list1 = list1.next;
+        len1 ++;
+        tempList = tempList.next;
+      } else {
+        const node = {
+          val: list2.val,
+          next: null,
+        };
+        tempList.next = node;
+        list2 = list2.next;
+        len2 ++;
+        tempList = tempList.next;
+      }
+    }
+    while(list1) {
+      const node = {
+        val: list1.val,
+        next: null,
+      };
+      tempList.next = node;
+      list1 = list1.next;
+      len1 ++;
+      tempList = tempList.next;
+    }
+    while(list2) {
+      const node = {
+        val: list2.val,
+        next: null,
+      };
+      tempList.next = node;
+      list2 = list2.next;
+      len2 ++;
+      tempList = tempList.next;
+    }
+    return {
+      list: head,
+      len: len1 + len2,
+    };
+  }
+  // 方法1、合并后取中位数
+  function getMiddleNumberFromLists(list1, list2) {
+    let {list, len} = mergeList(list1, list2);
+    console.log(list);
+    let count = 1;
+    while(list) {
+      list = list.next;
+      count++
+      if (count === Math.floor(len/2)) {
+        break;
+      }
+    }
+    return list.val;
+  }
+  // 方法2、直接对比累计
+  function getMiddleNumberFromLists2(list, list2, len1, len2) {
+    const len = len1 + len2;
+    let count = 1;
+    let target = null;
+    let isFound = false;
+    while(list1 && list2) {
+      if (list1.val <= list2.val) {
+        target = {
+          val: list1.val,
+          next: null,
+        };
+        list1 = list1.next;
+      } else {
+        target = {
+          val: list2.val,
+          next: null,
+        };
+        list2 = list2.next;
+      }
+      if (count === Math.floor(len/2)) {
+        isFound = true;
+        break;
+      }
+      count ++;
+    }
+    while(list1 && !isFound) {
+      target = {
+        val: list1.val,
+        next: null,
+      };
+      if (count === Math.floor(len/2)) {
+        isFound = true;
+        break;
+      }
+      list1 = list1.next;
+      count ++;
+    }
+    while(list2 && !isFound) {
+      target = {
+        val: list2.val,
+        next: null,
+      };
+      if (count === Math.floor(len/2)) {
+        isFound = true;
+        break;
+      }
+      list2 = list2.next;
+      count ++;
+    }
+    if (isFound) {
+      return target.val;
+    }
+    return null;
+  }
+  function createListFromArray(array) {
+    let list = null;
+    let head = null;
+    for (let index = 0; index < array.length; index++) {
+      const element = array[index];
+      if (index === 0) {
+        list = {
+          val: element,
+          next: null,
+        };
+        head = list;
+      } else {
+        const node = {
+          val: element,
+          next: null,
+        };
+        list.next = node;
+        list = list.next;
+      }
+    }
+    return head;
+  }
+  // const arr1 = [1,3,5,7,9];
+  // const arr2 = [2,3,4,5,6];
+  // const arr1 = [-100, -10, 1, 1, 1, 1];
+  // const arr2 = [-50, 0, 2, 3, 4, 5];
+  // const arr1 = [1,2,3];
+  // const arr2 = [4,5,6];
+  // const arr1 = [4,5,6];
+  // const arr2 = [1,2,3];
+  const arr1 = [2];
+  const arr2 = [1];
+  let list1 = createListFromArray(arr1);
+  let list2 = createListFromArray(arr2);
+  // const res = getMiddleNumberFromLists(list1, list2);
+  const res = getMiddleNumberFromLists2(list1, list2, 1 ,1);
+  console.log(res);
+}
+</script>
+</body>
+</html>

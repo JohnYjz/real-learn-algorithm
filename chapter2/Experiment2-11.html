@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+<script>
+window.onload = function () {
+  function mergeUnionList(param1, param2) {
+    let list1 = param1;
+    let list2 = param2;
+    let temp = {
+      val: '',
+      next: null,
+    };
+    const head = temp;
+    while(list1 && list2) {
+      if (list1.val < list2.val) {
+        const node = {
+          val: list1.val,
+          next: null,
+        };
+        temp.next = node;
+        list1 = list1.next;
+      } else {
+        const node = {
+          val: list2.val,
+          next: null,
+        };
+        temp.next = node;
+        list2 = list2.next;
+      }
+      temp = temp.next;
+    }
+    while(list1) {
+      console.log('剩余list1', list1.val);
+      const node = {
+        val: list1.val,
+        next: null,
+      };
+      temp.next = node;
+      temp = temp.next;
+      list1 = list1.next;
+    }
+    while(list2) {
+      // console.log('剩余list2', list2.val);
+      const node = {
+        val: list2.val,
+        next: null,
+      };
+      temp.next = node;
+      temp = temp.next;
+      console.log(temp);
+      list2 = list2.next;
+    }
+    return head;
+  }
+
+  function mergeUnionListWithoutExtraList(list1, list2) {
+    let preNode1 = {
+      val: '',
+      next: list1,
+    };
+    const head = preNode1;
+    while(list1&&list2) {
+      // console.log('list1', list1.val);
+      console.log('list2', list2.val);
+      if (list1.val > list2.val) {
+        const node = {
+          val: list2.val,
+          next: null,
+        };
+        console.log('preNode1', preNode1);
+        node.next = preNode1.next;
+        preNode1.next = node;
+        // preNode1 = preNode1.next;
+        list2 = list2.next;
+      } else {
+        preNode1 = list1;
+        list1 = list1.next;
+      }
+    }
+    while(list2) {
+      const node = {
+        val: list2.val,
+        next: null,
+      };
+      // if (list1) {
+        preNode1.next = list2;
+        preNode1 = preNode1.next;
+        list2 = list2.next;
+      // }
+    }
+    return head;
+
+  }
+
+  function createListFromArray(array) {
+    let preNode = {
+      val: array[0],
+      next: null,
+    };
+    const myHead = preNode;
+    // console.log('myHead', myHead);
+    for (let index = 1; index < array.length; index++) {
+      const element = array[index];
+      const node = {
+        val: element,
+        next: null,
+      };
+      // console.log(node.val);
+      preNode.next = node;
+      preNode = preNode.next;
+      // console.log('preNode', preNode.val);
+    }
+    // console.log(myHead);
+    return myHead;
+  }
+  const arr1 = [1,2,3,4,5];
+  const arr2 = [1,2,3,4,5];
+  const list1 = createListFromArray(arr1);
+  console.log('list1:', list1);
+  const list2 = createListFromArray(arr2);
+  console.log('list2:', list2);
+  // const res = mergeUnionList(list1, list2);
+  const res = mergeUnionListWithoutExtraList(list1, list2);
+  console.log('res:', res);
+}
+</script>
+</body>
+</html>
