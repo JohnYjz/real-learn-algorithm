@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+<script>
+window.onload = function() {
+  function QQHashTable(size) {
+    this.array = [];
+    this.size = size;
+    this.maxPrime = this.setPrime(size);
+    console.log(this.maxPrime);
+  }
+  QQHashTable.prototype.setPrime = function(size) {
+    for (let index = size; index >= 1; index--) {
+      if (this.isPrime(index)) {
+        return index;
+      }
+    }
+  }
+  QQHashTable.prototype.isPrime = function(number) {
+    if (number === 1) {
+      return true;
+    }
+    console.log(number);
+    for (let index = Math.floor(number/2); index > 1; index--) {
+      if (number % index === 0) {
+        console.log(`number % index === 0:   ${number} % ${index} === 0`)
+        return false;
+      }
+    }
+    return true;
+  }
+  QQHashTable.prototype.operateAll = function(array) {
+    for (let index = 0; index < array.length; index++) {
+      const element = array[index];
+      this.operateItem(element);
+    }
+  }
+  QQHashTable.prototype.operateItem = function([operator, account, password]) {
+    if (operator === 'L') {
+      this.login(account, password);
+    } else if (operator === 'N') {
+      this.create(account, password);
+    } else {
+      console.error('操作符不正确！');
+    }
+  }
+  QQHashTable.prototype.login = function(account, password) {
+    const position = this.findPosition(account);
+    if (this.array[position]) {
+      const { password: passwordSaved } = this.array[position];
+      if (password === passwordSaved) {
+        console.log('Login: OK');
+      } else {
+        console.log('ERROR: Wrong PW');
+      }
+    } else {
+      console.log('ERROR: Not Exist');
+    }
+  }
+  QQHashTable.prototype.findPosition = function(account) {
+    const miniNumber = account.slice(2, 6);
+    let position = miniNumber % this.maxPrime;
+    // console.log(position);
+    let index = 1;
+    let k = index;
+    while(this.array[position]) {
+      if (this.array[position].account === account) {
+        return position;
+      }
+      position = position + k;
+      if (position < 0) {
+        position = this.size+position;
+      }
+      if (position >= this.size) {
+        position = position%this.size;
+      }
+      if (k > 0) {
+        k = -k;
+      } else {
+        index++;
+        k = index * index;
+      }
+    }
+    return position;
+  }
+  QQHashTable.prototype.create = function(account, password) {
+    const position = this._create(account, password);
+    if (position !== -1) {
+      console.log('New: OK');
+    } else {
+      console.log('ERROR: Exist');
+    }
+  }
+  QQHashTable.prototype._create = function(account, password) {
+    const miniNumber = account.slice(2, 6);
+    let position = miniNumber % this.maxPrime;
+    let index = 1;
+    let k = index;
+    while(this.array[position]) {
+      if (this.array[position].account === account) {
+        return -1;
+      }
+      position = position + k;
+      if (position < 0) {
+        position = this.size+position;
+      }
+      if (position >= this.size) {
+        position = position%this.size;
+      }
+      if (k > 0) {
+        k = -k;
+      } else {
+        index++;
+        k = index * index;
+      }
+    }
+    this.array[position] = {
+      account,
+      password,
+    };
+    return position;
+  }
+
+  const tests = [
+    ['L', '1234567890', 'myQQ@qq.com'],
+    ['N', '1234567890', 'myQQ@qq.com'],
+    ['N', '1234567890', 'myQQ@qq.com'],
+    ['L', '1234567890', 'myQQ@qq'],
+    ['L', '1234567890', 'myQQ@qq.com'],
+  ];
+  const myHashTable = new QQHashTable(100000);
+  myHashTable.operateAll(tests);
+  
+}
+</script>
+</body>
+</html>
