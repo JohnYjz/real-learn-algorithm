@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+<script>
+window.onload = function() {
+  const charMap = {
+    'A': 0,
+    'B': 1,
+    'C': 2,
+    'D': 3,
+    'E': 4,
+    'F': 5,
+    'G': 6,
+    'H': 7,
+    'I': 8,
+    'J': 9,
+    'K': 10,
+    'L': 11,
+    'M': 12,
+    'N': 13,
+    'O': 14,
+    'P': 15,
+    'Q': 16,
+    'R': 17,
+    'S': 18,
+    'T': 19,
+    'U': 20,
+    'V': 21,
+    'W': 22,
+    'X': 23,
+    'Y': 24,
+    'Z': 26,
+    '': 27,
+    0: 28,
+    1: 29,
+    2: 30,
+    3: 31,
+    4: 32,
+    5: 33,
+    6: 34,
+    7: 35,
+    8: 36,
+    9: 37,
+  };
+  function HotMsgHashTable() {
+    this.array = [];
+    this.size = 50;
+    this.divisor = 59;
+  }
+  HotMsgHashTable.prototype.insertAll = function(array) {
+    for (let index1 = 0; index1 < array.length; index1++) {
+      const msg = array[index1];
+      // 重复的次要过滤掉
+      const hotMsgs = this.getHotMsgs(msg);
+      for (let index2 = 0; index2 < hotMsgs.length; index2++) {
+        const hotMsg = hotMsgs[index2];
+        this.insert(hotMsg);
+      }
+    }
+    console.log(this.array);
+    this.outputResult();
+  }
+  HotMsgHashTable.prototype.getHotMsgs = function(msg) {
+    const sentances = msg.split('#');
+    // console.log('sentances', sentances);
+    const res = [];
+    sentances.forEach((sentence, index) => {
+      if (index === 0 || index === sentances.length-1) {
+        return;
+      }
+      const pattern = /[^a-zA-Z0-9\s]/gi
+      console.log('sentence:', sentence);
+      const tempSentence = sentence.replace(pattern, ' ').replace('  ', ' ').toUpperCase().trim();
+      console.log('after replace:', tempSentence);
+      if (res.indexOf(tempSentence) === -1 && tempSentence !== '' ) {
+        res.push(tempSentence);
+      }
+    });
+    console.log('res is:', res);
+    return res;
+  }
+  HotMsgHashTable.prototype.insert = function(hotMsg) {
+    let pos = this.getPosByStr(hotMsg);
+    // console.log('pos', pos);
+    while(this.array[pos]) {
+      if (this.array[pos].msg === hotMsg) {
+        this.array[pos].count++;
+        break;
+      }
+      pos++;
+      if (pos === this.size) {
+        pos = 0;
+      }
+    }
+    if (!this.array[pos]) {
+      this.array[pos] = {
+        msg: hotMsg,
+        count: 1,
+      };
+    }
+  }
+  HotMsgHashTable.prototype.getPosByStr = function(hotMsg) {
+    const tempMsg = hotMsg.slice(-5);
+    // console.log(tempMsg);
+    let result = 0;
+    for (let index = 0; index < tempMsg.length; index++) {
+      const item = tempMsg[index];
+      const code = charMap[item];
+      // console.log(code);
+      result = (result<<6) + code;
+      // console.log(result);
+    }
+    return result%this.divisor;
+  }
+  HotMsgHashTable.prototype.outputResult = function() {
+    const tempResult = this.array.filter(item => !!item);
+    let max = 0;
+    let result = [];
+    for (let index = 0; index < tempResult.length; index++) {
+      const element = tempResult[index];
+      if (element.count > max) {
+        max = element.count;
+        result = [element.msg];
+      } else if (element.count === max) {
+        result.push(element.msg);
+      }
+    }
+    console.log(result[0]);
+    console.log(max);
+    if (result.length > 1) {
+      console.log('And ' + (result.length-1) + ' more...');
+    }
+  }
+  const test1 = [
+    'This is a #test of 1 topic#.',
+    'Another #Test of (1)topic.#',
+    'This is a #Hot# topic',
+    'This is a test of 1 topic',
+  ];
+  const test2 = [
+    'This is a #test of topic#.',
+    'Another #Test of topic.#',
+    'This is a #Hot #Hot #topic',
+    'Another #hot! #Hot # topic',
+  ];
+  const test3 = [
+    'Test #For@ diff words#',
+    'Test # ford iff words#',
+    '#more than#one#topics.#'
+  ]
+  const myHashTable = new HotMsgHashTable();
+  myHashTable.insertAll(test3);
+}
+</script>
+</body>
+</html>

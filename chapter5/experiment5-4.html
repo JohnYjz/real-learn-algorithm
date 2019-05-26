@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+<script>
+window.onload = function() {
+  const charMap = {
+    'A': 0,
+    'B': 1,
+    'C': 2,
+    'D': 3,
+    'E': 4,
+    'F': 5,
+    'G': 6,
+    'H': 7,
+    'I': 8,
+    'J': 9,
+    'K': 10,
+    'L': 11,
+    'M': 12,
+    'N': 13,
+    'O': 14,
+    'P': 15,
+    'Q': 16,
+    'R': 17,
+    'S': 18,
+    'T': 19,
+    'U': 20,
+    'V': 21,
+    'W': 22,
+    'X': 23,
+    'Y': 24,
+    'Z': 26,
+  };
+  function WordHashTable() {
+    this.array = [];
+    this.size = 50;
+    this.divisor = 59;
+  }
+  WordHashTable.prototype.insert = function(word, fileName) {
+    const pos = this.getPosToInsert(word);
+    if (this.array[pos]) {
+      this.setRelatedFiles(pos, fileName);
+    } else {
+      this.array[pos] = {
+        word,
+        relatedFiles: [fileName],
+      };
+    }
+    return pos;
+  }
+  WordHashTable.prototype.getPosToInsert = function(word) {
+    let initPos = this.getSumNumber(word);
+    while(this.array[initPos]) {
+      if (this.array[initPos].word === word) {
+        break;
+      }
+      initPos++;
+      if (initPos === this.size) {
+        initPos = 0;
+      }
+    }
+    return initPos;
+  }
+  WordHashTable.prototype.getSumNumber = function(word) {
+    let myWord = word.slice(0, 10);
+    let resultNumber = 0;
+    for (let index = myWord.length-1; index >= 0; index--) {
+      const itemCode = charMap[myWord[index]];
+      resultNumber = resultNumber << 5 + itemCode;
+    }
+    return resultNumber % this.divisor;
+  }
+  WordHashTable.prototype.setRelatedFiles = function(pos, fileName) {
+    
+    if (this.array[pos].relatedFiles.indexOf(fileName) !== -1) {
+      return;
+    }
+    this.array[pos].relatedFiles.push(fileName);
+  }
+
+  function FileStatistics(file, name) {
+    this.array = this.setWords(file);
+    this.fileName = name;
+    this.statisticsArray = [];
+  }
+  FileStatistics.prototype.setWords = function(file) {
+    const tempArr = this.splitWords(file);
+    return tempArr;
+  }
+  FileStatistics.prototype.splitWords = function(file) {
+    const splitPattern = /[^A-Za-z]/gi;
+    const tempArr = file.split(splitPattern);
+    // 去重、大写化
+    // 仅筛选长度3位以上的
+    const resultArr = [];
+    tempArr.forEach(item => {
+      if (item.length < 3) {
+        return;
+      }
+      const upperItem = item.toUpperCase();
+      
+      if (resultArr.indexOf(upperItem) === -1) {
+        // console.log(item, resultArr);
+        resultArr.push(upperItem);
+      }
+    });
+    return resultArr;
+  }
+  FileStatistics.prototype.insertToWordHashTable = function(hashTableObj) {
+    this.array.forEach(word => {
+      const pos = hashTableObj.insert(word, this.fileName);
+      this.statisticsArray.push({
+        word,
+        tablePos: pos,
+      });
+    });
+  }
+  function init(files) {
+    if (files.length <= 1) {
+      return;
+    }
+    const myHashTable = new WordHashTable();
+    const filesArray = [];
+    for (let index = 0; index < files.length; index++) {
+      const file = files[index];
+      const fileStatisticsObj = new FileStatistics(file, index);
+      fileStatisticsObj.insertToWordHashTable(myHashTable);
+      filesArray.push(fileStatisticsObj);
+    }
+    console.log(filesArray[0]);
+    console.log(filesArray[1]);
+    for (let index = 0; index < filesArray.length - 1; index++) {
+      const file = filesArray[index];
+      const nextFile = filesArray[index+1];
+      let totalCount = setUnion(file, nextFile);
+      let count = 0;
+      file.statisticsArray.forEach(item => {
+        const wordPosInTable = item.tablePos;
+        if (myHashTable.array[wordPosInTable].relatedFiles.indexOf(index + 1) !== -1) {
+          count = count + 1;
+        }
+      });
+      console.log(count, totalCount);
+      console.log('result', `${((count/totalCount)*100).toFixed(1)}%`);
+    }
+  }
+  function setUnion(obj1, obj2) {
+    let resLen = obj1.array.length;
+    // console.log(resLen);
+    obj2.array.forEach(item => {
+      if (obj1.array.indexOf(item) === -1) {
+        resLen++;
+      }
+    });
+    return resLen;
+  }
+  const file1 = 'Aaa Bbb Ccc';
+  const file2 = 'Bbb Ccc Ddd';
+  const file3 = 'Aaa2 ccc Eee is ar Ddd@Fff';
+  const testFiles = [file1, file2, file3];
+
+  const testFiles2 = ['This is a test for repeated repeated words.', 'All repeated words shall be counted only once. a longlongword is the same as this longlongwo']
+  const testFile3 = ['this is a test to show ...', 'not similar at all']
+  const testFile4 = ['these two files are the same', 'these.two_files are the SAME'];
+  init(testFiles2);
+
+
+}
+</script>
+</body>
+</html>

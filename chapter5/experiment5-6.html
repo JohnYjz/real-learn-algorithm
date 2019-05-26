@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+<script>
+window.onload = function() {
+  function AirPlaneCorpUserHashTable() {
+    this.array = [];
+    this.size = 50;
+    this.divisor = 59;
+  }
+  AirPlaneCorpUserHashTable.prototype.insertAll = function(array) {
+    for (let index = 0; index < array.length; index++) {
+      const [id, money] = array[index].split(' ');
+      this.insert({
+        id,
+        money: Number(money),
+      });
+    }
+    // console.log(this.array);
+  }
+  AirPlaneCorpUserHashTable.prototype.insert = function(item) {
+    const pos = this.findPosToInsert(item);
+    if (this.array[pos]) {
+      this.array[pos].money += this.getMoney(item.money);
+    } else {
+      this.array[pos] = {
+        id: item.id,
+        money: this.getMoney(item.money),
+      };
+    }
+  }
+  AirPlaneCorpUserHashTable.prototype.getMoney = function(money) {
+    if (money < 500) {
+      return 500;
+    }
+    return money;
+  }
+  AirPlaneCorpUserHashTable.prototype.findPosToInsert = function(item) {
+    const id = item.id;
+    let pos = this.getPosById(id);
+    let index = 1;
+    let k = index;
+    while(this.array[pos]) {
+      // console.log('findPosToInsert k', k);
+      // console.log('findPosToInsert value', this.array[pos]);
+      if (this.array[pos].id === id) {
+        break;
+      }
+      pos += k;
+      if (pos < 0) {
+        pos = this.size + pos;
+      }
+      pos = pos%this.size;
+      // console.log(pos);
+      if (k > 0) {
+        k = -k;
+      } else {
+        index++;
+        k = index * index;
+      }
+      // if (k>1000) {
+      //   break;
+      // }
+    }
+    return pos;
+  }
+  AirPlaneCorpUserHashTable.prototype.getPosById = function(id) {
+    let sum = 0;
+    // console.log(id);
+    const posArr = [10, 12, 14, 16, 17, 18];
+    for (let index = 0; index < posArr.length; index++) {
+      const pos = posArr[index] - 1;
+      sum = sum*10 + this.setIdNumber(id[pos]);
+      // console.log('sum', sum);
+    }
+    // console.log('getPosById', sum % this.divisor);
+    return sum % this.divisor;
+  }
+  AirPlaneCorpUserHashTable.prototype.setIdNumber = function(number) {
+    // console.log('number', number);
+    if (number === 'x' || number === 'X') {
+      return 10;
+    }
+    return Number(number);
+  }
+  AirPlaneCorpUserHashTable.prototype.findAll = function(array) {
+    for (let index = 0; index < array.length; index++) {
+      const id = array[index];
+      const msg = this.findAndPrint(id);
+      console.log(msg);
+    }
+  }
+  AirPlaneCorpUserHashTable.prototype.findAndPrint = function(id) {
+    let pos = this.getPosById(id);
+    let index = 1;
+    let k = index;
+    while(this.array[pos]) {
+      if (this.array[pos].id === id) {
+        break;
+      }
+      pos += k;
+      if (pos < 0) {
+        pos = this.size + pos;
+      } else {
+        pos = pos%this.size;
+      }
+      if (k > 0) {
+        k = -k;
+      } else {
+        index++;
+        k = index * index;
+      }
+    }
+    // console.log(pos);
+    // console.log(this.array);
+    if (!this.array[pos]) {
+      return 'No Info';
+    }
+    return this.array[pos].money;
+  }
+  const testinsert = [
+    '330106199010080419 499',
+    '110108198403100012 15000',
+    '120104195510156021 800',
+    '330106199010080419 1',
+  ];
+  const testread = [
+    '120104195510156021',
+    '110108198403100012',
+    '330106199010080419',
+    '33010619901008041x',
+  ];
+  const myTable = new AirPlaneCorpUserHashTable();
+  myTable.insertAll(testinsert);
+  myTable.findAll(testread);
+}
+</script>
+</body>
+</html>
